@@ -12,17 +12,17 @@ import { Avatar } from "../../../_components/avatar";
  */
 export function AgentHeader({ agent }: { readonly agent: Agent }) {
   return (
-    <section className="shrink-0 border-line border-b bg-paper">
-      <div className="flex w-full flex-col gap-3 px-4 pt-3 pb-4">
-        <div className="flex items-start gap-3">
+    <section className="shrink-0 border-line border-b bg-paper lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
+      <div className="flex w-full flex-col gap-3 px-4 pt-3 pb-4 sm:px-6 lg:gap-4 lg:px-0 lg:pt-8 lg:pr-8">
+        <div className="flex items-start gap-3 lg:flex-col lg:gap-4">
           <span
             aria-hidden="true"
-            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-sheet text-2xl ring-1 ring-line"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-sheet text-2xl ring-1 ring-line lg:size-20 lg:text-4xl"
           >
             {agent.emoji}
           </span>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate font-bold text-[20px] leading-6 tracking-[-0.01em]">{agent.name}</h1>
+            <h1 className="truncate font-bold text-[20px] leading-6 tracking-[-0.01em] lg:whitespace-normal lg:text-[28px] lg:leading-[1.15] lg:tracking-[-0.02em]">{agent.name}</h1>
             <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-ink-3 text-xs leading-5">
               <Link
                 className="inline-flex min-w-0 items-center gap-1.5 hover:text-ink"
@@ -45,7 +45,7 @@ export function AgentHeader({ agent }: { readonly agent: Agent }) {
 
         <p className="text-ink-2 text-sm leading-5">{agent.description}</p>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5 lg:gap-2">
           {agent.permissions.length === 0 ? (
             <Chip>sin permisos</Chip>
           ) : (
@@ -55,7 +55,7 @@ export function AgentHeader({ agent }: { readonly agent: Agent }) {
               </Chip>
             ))
           )}
-          <span className="ml-auto inline-flex items-center gap-1.5 text-ink-3 text-xs">
+          <span className="ml-auto inline-flex items-center gap-1.5 text-ink-3 text-xs lg:ml-0 lg:w-full lg:pt-2">
             <span className="tnum">límite US${agent.cardLimitUsd}</span>
             <SimTag />
           </span>

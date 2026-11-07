@@ -196,12 +196,12 @@ export function NewAgentForm() {
         </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 pt-2">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row-reverse">
         {/* Única acción mango de la pantalla */}
-        <Button className="w-full" disabled={pending} size="lg" type="submit">
+        <Button className="w-full sm:flex-1" disabled={pending} size="lg" type="submit">
           {pending ? "Creando…" : "Crear agente"}
         </Button>
-        <Button asChild className="w-full" size="lg" variant="secondary">
+        <Button asChild className="w-full sm:flex-1" size="lg" variant="secondary">
           <Link href="/">Volver</Link>
         </Button>
         <p className="text-center text-ink-3 text-xs">El agente propone. Vos decidís.</p>

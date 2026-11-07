@@ -24,7 +24,7 @@ export default async function CreatorPage({ params }: { readonly params: Params 
   const runs = publicAgents.reduce((sum, agent) => sum + agent.runsCount, 0);
 
   return (
-    <main className="flex w-full flex-1 flex-col gap-6 px-4 pt-8 pb-12">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 pt-8 pb-12 sm:px-6 md:pt-12 lg:px-8">
       <header className="flex items-center gap-4">
         <Avatar className="size-14 text-base" image={first.ownerImage} name={first.ownerName} />
         <div className="min-w-0">
@@ -40,7 +40,7 @@ export default async function CreatorPage({ params }: { readonly params: Params 
       {publicAgents.length === 0 ? (
         <p className="rounded-2xl bg-sheet px-6 py-8 text-center text-ink-2 ring-1 ring-line">Sus agentes son privados.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
           {publicAgents.map((agent) => (
             <li key={agent.id}>
               <AgentCard agent={agent} showCreator={false} />

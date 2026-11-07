@@ -34,8 +34,8 @@ export default function RootLayout({ children }: { readonly children: ReactNode 
     <html className={archivo.variable} lang="es">
       <body className="flex min-h-dvh flex-col bg-paper text-ink">
         <TooltipProvider>
-          {/* App mobile tranquila: máx. 480px, centrada en desktop con bordes laterales. */}
-          <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-1 flex-col bg-paper sm:border-x sm:border-line">
+          {/* Mobile-first: una columna en el celular; cada página fija su contenedor (max-w-6xl) en desktop. */}
+          <div className="flex min-h-dvh w-full flex-1 flex-col bg-paper">
             <SiteNav />
             {children}
           </div>

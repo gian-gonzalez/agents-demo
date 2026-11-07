@@ -179,7 +179,7 @@ export function AgentChat({
     <div className="flex min-h-0 flex-1 flex-col bg-paper text-ink">
       {showConversationLayout ? (
         <>
-          <div className="flex w-full items-center justify-between px-4 pt-2">
+          <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-2 sm:px-6">
             <span className="flex items-center gap-2 text-xs text-ink-3">
               <SimTag />
               <span className="tnum">
@@ -209,7 +209,7 @@ export function AgentChat({
                 : `eve:web-chat-scroll:${activeSessionId}`
             }
           >
-            <ConversationContent className="w-full gap-5 px-4 pt-4 pb-6">
+            <ConversationContent className="mx-auto w-full max-w-3xl gap-5 px-4 pt-4 pb-6 sm:px-6">
               {agent.messages.map((message) =>
                 showPendingThinking &&
                 isPendingAssistantShell &&
@@ -268,7 +268,7 @@ export function AgentChat({
         </div>
       )}
 
-      <div className="w-full shrink-0 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]">{composer}</div>
+      <div className="mx-auto w-full max-w-3xl shrink-0 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),12px)] sm:px-6">{composer}</div>
     </div>
   );
 }

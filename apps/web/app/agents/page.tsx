@@ -13,7 +13,7 @@ export default async function AgentsPage() {
   const [agents, creators] = await Promise.all([store.listAgents({ limit: 100 }), store.listCreators()]);
 
   return (
-    <main className="flex w-full flex-1 flex-col gap-8 px-4 pt-8 pb-12">
+    <main className="mx-auto grid w-full max-w-6xl flex-1 gap-8 px-4 pt-8 pb-12 sm:px-6 md:pt-12 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-10 lg:px-8">
       <section className="flex flex-col gap-4">
         <div>
           <h1 className="font-bold text-[28px] leading-[1.15] tracking-[-0.02em]">Agentes</h1>
@@ -27,7 +27,7 @@ export default async function AgentsPage() {
             <p className="text-ink-2">Todavía no hay agentes públicos.</p>
           </div>
         ) : (
-          <ul className="flex flex-col gap-3">
+          <ul className="grid gap-3 sm:grid-cols-2 lg:gap-4 2xl:grid-cols-3">
             {agents.map((agent) => (
               <li key={agent.id}>
                 <AgentCard agent={agent} />
@@ -37,7 +37,7 @@ export default async function AgentsPage() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-3 lg:sticky lg:top-20">
         <h2 className="font-bold text-xl tracking-[-0.01em]">Creadores</h2>
         {creators.length === 0 ? (
           <p className="text-ink-3 text-sm">Todavía no hay creadores.</p>

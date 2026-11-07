@@ -51,7 +51,7 @@ En local no hay sign-in (`localDev()`) y el usuario es "Dev local". Para que la 
 
 ## Diseño
 
-Sistema **Mango, calmo**: papel crema, un solo acento mango por pantalla, colores de veredicto (leaf / chili / plum) solo para decisiones del motor, una familia tipográfica (Archivo). Forma de app mobile tranquila: máx. 480px, centrada en desktop. Fuente de verdad: tokens en `apps/web/app/globals.css` (`@theme`) y primitivas en `apps/web/components/brand.tsx` (MangoMark, Wordmark, CardArt, StatusPill, SimTag, Chip, ProgressBar). Todo pago, carga o saldo simulado lleva `SimTag`.
+Sistema **Mango, calmo**: papel crema, un solo acento mango por pantalla, colores de veredicto (leaf / chili / plum) solo para decisiones del motor, una familia tipográfica (Archivo). Mobile-first: una columna en el celular; en desktop contenedor de 1152px con grillas (home y galería), formulario centrado a 720px y la página del agente a dos paneles (ficha a la izquierda, chat a la derecha). Fuente de verdad: tokens en `apps/web/app/globals.css` (`@theme`) y primitivas en `apps/web/components/brand.tsx` (MangoMark, Wordmark, CardArt, StatusPill, SimTag, Chip, ProgressBar). Todo pago, carga o saldo simulado lleva `SimTag`.
 
 ## Deploy
 

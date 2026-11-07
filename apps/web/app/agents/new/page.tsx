@@ -11,9 +11,9 @@ export default async function NewAgentPage() {
   if (!user) return <SignIn callbackURL="/agents/new" message="Entrá con Vercel para crear tu agente" />;
 
   return (
-    <main className="flex w-full flex-1 flex-col gap-6 px-4 pt-6 pb-10">
+    <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-6 px-4 pt-6 pb-10 sm:px-6 md:pt-12">
       <header className="flex flex-col gap-2 rise">
-        <h1 className="font-bold text-[28px] leading-[1.15] tracking-[-0.02em]">Creá tu agente</h1>
+        <h1 className="font-bold text-[28px] leading-[1.15] tracking-[-0.02em] md:text-[36px]">Creá tu agente</h1>
         <p className="text-ink-3 text-sm">
           Lo vas a crear como <strong className="font-semibold text-ink">{user.name}</strong>. Va a aparecer en el
           feed con tu nombre y cualquiera va a poder probarlo.

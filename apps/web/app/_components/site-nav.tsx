@@ -12,7 +12,7 @@ export async function SiteNav() {
 
   return (
     <header className="sticky top-0 z-30 h-14 border-line border-b bg-paper/90 backdrop-blur">
-      <div className="flex h-full w-full items-center gap-2 px-4">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-2 px-4 sm:px-6 lg:px-8">
         <Link className="flex items-center gap-2 text-ink" href="/">
           <MangoMark size={26} />
           <span className="font-semibold text-xl leading-none">mango</span>

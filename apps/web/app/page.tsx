@@ -12,19 +12,20 @@ export default async function HomePage() {
   const [stats, agents] = await Promise.all([store.stats(), store.listAgents({ limit: 30 })]);
 
   return (
-    <main className="flex w-full flex-1 flex-col gap-8 px-4 pt-8 pb-12">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 pt-8 pb-12 sm:px-6 md:gap-10 md:pt-12 lg:px-8">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:items-end lg:gap-12">
       <section className="flex flex-col gap-4">
         <p className="font-semibold text-ink-3 text-sm">Tu plata, tus reglas.</p>
-        <h1 className="font-bold text-[28px] leading-[1.15] tracking-[-0.02em]">
+        <h1 className="font-bold text-[28px] leading-[1.1] tracking-[-0.02em] md:text-[40px] lg:text-[52px] lg:tracking-[-0.03em]">
           Tu agente opera.
           <br />
           <span className="text-ink-3">Vos decidís.</span>
         </h1>
-        <p className="text-ink-2">
+        <p className="max-w-xl text-ink-2 md:text-lg">
           Cada persona crea su propio agente con permisos sobre una cuenta belo de prueba. El agente
           propone pagos, cambios y movimientos; nada se ejecuta sin tu OK.
         </p>
-        <div className="flex flex-col gap-2 pt-1">
+        <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:gap-3">
           <Button asChild>
             <Link href="/agents/new">Crear mi agente</Link>
           </Button>
@@ -35,6 +36,7 @@ export default async function HomePage() {
       </section>
 
       <StatsRow stats={stats} />
+      </div>
 
       <LiveRefresh>
         <section className="flex flex-col gap-4">
@@ -45,7 +47,7 @@ export default async function HomePage() {
           {agents.length === 0 ? (
             <EmptyFeed />
           ) : (
-            <ol className="flex flex-col gap-3">
+            <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
               {agents.map((agent, index) => (
                 <li key={agent.id}>
                   <AgentCard agent={agent} animate={index === 0} />
@@ -66,11 +68,11 @@ function StatsRow({ stats }: { readonly stats: { agents: number; creators: numbe
     { label: "ejecuciones", value: stats.runs },
   ];
   return (
-    <dl className="grid grid-cols-3 divide-x divide-line rounded-2xl bg-sheet ring-1 ring-line">
+    <dl className="grid grid-cols-3 divide-x divide-line rounded-2xl bg-sheet ring-1 ring-line md:grid-cols-1 md:divide-x-0 md:divide-y">
       {items.map((item) => (
-        <div className="flex flex-col gap-0.5 px-4 py-3" key={item.label}>
-          <dd className="font-bold text-[28px] text-ink leading-none tnum">{item.value}</dd>
-          <dt className="text-ink-3 text-xs">{item.label}</dt>
+        <div className="flex flex-col gap-0.5 px-4 py-3 md:flex-row md:items-baseline md:justify-between md:px-6 md:py-5" key={item.label}>
+          <dd className="font-bold text-[28px] text-ink leading-none tnum md:order-2 md:text-[40px] md:tracking-[-0.03em]">{item.value}</dd>
+          <dt className="text-ink-3 text-xs md:order-1 md:text-sm">{item.label}</dt>
         </div>
       ))}
     </dl>
