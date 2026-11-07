@@ -13,7 +13,7 @@ export function Avatar({
   return (
     <span
       className={cn(
-        "relative inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary font-medium font-mono text-[0.65rem] text-secondary-foreground",
+        "relative inline-flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-ink/[0.05] font-semibold text-[11px] text-ink-2 uppercase tracking-[0.04em]",
         className,
       )}
       aria-hidden="true"
@@ -24,7 +24,7 @@ export function Avatar({
       ) : (
         initials(name)
       )}
-      <span className="pointer-events-none absolute inset-0 rounded-full border border-white/15" />
+      <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-ink/10 ring-inset" />
     </span>
   );
 }

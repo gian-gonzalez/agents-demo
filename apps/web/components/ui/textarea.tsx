@@ -2,12 +2,15 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/** Textarea Mango: mismo lenguaje que Input, crece con el contenido. */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       data-slot="textarea"
       className={cn(
-        "flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+        "flex field-sizing-content min-h-24 w-full rounded-xl bg-paper px-4 py-3 text-base text-ink leading-[1.45] ring-1 ring-line ring-inset transition-[box-shadow,background-color] duration-200 ease-settle outline-none placeholder:text-ink-3 disabled:cursor-not-allowed disabled:opacity-50",
+        "focus-visible:bg-sheet focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink",
+        "aria-invalid:ring-chili aria-invalid:focus-visible:ring-chili",
         className,
       )}
       {...props}

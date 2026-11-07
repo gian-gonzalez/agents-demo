@@ -6,8 +6,12 @@ import { isValidElement } from "react";
 
 import { CodeBlock } from "./code-block";
 
+/* El único lugar donde se permite mono: input/output de una tool, sobre tinta al 4%. */
 const compactCodeBlockClassName =
-  "rounded-none border-0 bg-transparent [&_pre]:!bg-transparent [&_pre]:px-3 [&_pre]:pt-2 [&_pre]:pb-3 [&_pre]:text-xs [&_code]:text-xs";
+  "rounded-none border-0 bg-transparent ring-0 [&_pre]:!bg-transparent [&_pre]:px-3 [&_pre]:pt-2 [&_pre]:pb-3 [&_pre]:text-xs [&_code]:text-xs";
+
+const sectionLabelClassName =
+  "block px-3 pt-3 font-sans text-[11px] font-semibold text-ink-3 uppercase tracking-[0.06em]";
 
 export type BashToolContentProps = ComponentProps<"div"> & {
   input: unknown;
@@ -30,24 +34,22 @@ export const BashToolContent = ({
 
   return (
     <div className={cn("space-y-2", className)} {...props}>
-      <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted/50 p-3 font-mono text-xs leading-relaxed">
+      <pre className="overflow-x-auto whitespace-pre-wrap rounded-xl bg-ink/[0.04] p-3 font-mono text-xs leading-relaxed text-ink">
         <code>
-          <span className="text-muted-foreground">$ </span>
+          <span className="text-ink-3">$ </span>
           {command ?? "…"}
         </code>
       </pre>
       {hasResult ? (
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted/50 p-3 font-mono text-xs leading-relaxed">
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-xl bg-ink/[0.04] p-3 font-mono text-xs leading-relaxed text-ink">
           <code>
-            <span className="mb-2 block font-sans text-[10px] text-muted-foreground uppercase tracking-wide">
-              Output
+            <span className="mb-2 block font-sans text-[11px] font-semibold text-ink-3 uppercase tracking-[0.06em]">
+              Salida
             </span>
             {stdout ? <span className="block">{String(stdout).trimEnd()}</span> : null}
-            {stderr ? (
-              <span className="block text-destructive">{String(stderr).trimEnd()}</span>
-            ) : null}
+            {stderr ? <span className="block text-ink-2">{String(stderr).trimEnd()}</span> : null}
             {typeof exitCode === "number" && exitCode !== 0 ? (
-              <span className="block text-muted-foreground">Exited with code {exitCode}</span>
+              <span className="block text-ink-3">Terminó con código {exitCode}</span>
             ) : null}
           </code>
         </pre>
@@ -70,10 +72,8 @@ export type ToolInputProps = ComponentProps<"div"> & {
 };
 
 export const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
-  <div className={cn("overflow-hidden rounded-md bg-muted/50", className)} {...props}>
-    <span className="block px-3 pt-3 font-sans text-[10px] text-muted-foreground uppercase tracking-wide">
-      Parameters
-    </span>
+  <div className={cn("overflow-hidden rounded-xl bg-ink/[0.04]", className)} {...props}>
+    <span className={sectionLabelClassName}>Parámetros</span>
     <div>
       <CodeBlock
         className={compactCodeBlockClassName}
@@ -111,16 +111,13 @@ export const ToolOutput = ({ className, output, errorText, ...props }: ToolOutpu
   return (
     <div
       className={cn(
-        "overflow-x-auto rounded-md text-xs [&_table]:w-full",
-        errorText ? "bg-destructive/10 text-destructive" : "bg-muted/50 text-foreground",
+        "overflow-x-auto rounded-xl bg-ink/[0.04] text-xs text-ink [&_table]:w-full",
         className,
       )}
       {...props}
     >
-      <span className="block px-3 pt-3 font-sans text-[10px] text-muted-foreground uppercase tracking-wide">
-        {errorText ? "Error" : "Result"}
-      </span>
-      {errorText && <div className="px-3 pt-2 pb-3">{errorText}</div>}
+      <span className={sectionLabelClassName}>{errorText ? "Error" : "Resultado"}</span>
+      {errorText && <div className="px-3 pt-2 pb-3 text-ink-2">{errorText}</div>}
       {Output}
     </div>
   );

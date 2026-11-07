@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { MangoMark } from "@/components/brand";
 import { getStore } from "@/lib/db/store";
 import { AgentCard } from "../_components/agent-card";
 import { Avatar } from "../_components/avatar";
@@ -13,25 +13,21 @@ export default async function AgentsPage() {
   const [agents, creators] = await Promise.all([store.listAgents({ limit: 100 }), store.listCreators()]);
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl flex-1 gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_16rem]">
+    <main className="flex w-full flex-1 flex-col gap-8 px-4 pt-8 pb-12">
       <section className="flex flex-col gap-4">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h1 className="font-mono text-muted-foreground text-xs uppercase tracking-[0.2em]">Agentes</h1>
-            <p className="mt-1 text-muted-foreground text-sm">
-              {agents.length} {agents.length === 1 ? "agente público" : "agentes públicos"}
-            </p>
-          </div>
-          <Button asChild size="sm">
-            <Link href="/agents/new">Crear agente</Link>
-          </Button>
+        <div>
+          <h1 className="font-bold text-[28px] leading-[1.15] tracking-[-0.02em]">Agentes</h1>
+          <p className="mt-1 text-ink-3 text-sm tnum">
+            {agents.length} {agents.length === 1 ? "agente público" : "agentes públicos"}
+          </p>
         </div>
         {agents.length === 0 ? (
-          <p className="rounded-lg border border-border border-dashed p-6 font-mono text-muted-foreground text-sm">
-            [EMPTY] Todavía no hay agentes públicos.
-          </p>
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-sheet px-6 py-8 text-center ring-1 ring-line">
+            <MangoMark size={56} />
+            <p className="text-ink-2">Todavía no hay agentes públicos.</p>
+          </div>
         ) : (
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <ul className="flex flex-col gap-3">
             {agents.map((agent) => (
               <li key={agent.id}>
                 <AgentCard agent={agent} />
@@ -41,23 +37,24 @@ export default async function AgentsPage() {
         )}
       </section>
 
-      <aside className="flex flex-col gap-3">
-        <h2 className="font-mono text-muted-foreground text-xs uppercase tracking-[0.2em]">Creadores</h2>
+      <section className="flex flex-col gap-3">
+        <h2 className="font-bold text-xl tracking-[-0.01em]">Creadores</h2>
         {creators.length === 0 ? (
-          <p className="font-mono text-muted-foreground text-xs">[EMPTY]</p>
+          <p className="text-ink-3 text-sm">Todavía no hay creadores.</p>
         ) : (
-          <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
+          <ul className="flex flex-col divide-y divide-line rounded-2xl bg-sheet ring-1 ring-line">
             {creators.map((creator) => (
               <li key={creator.id}>
                 <Link
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-accent/50"
+                  className="flex items-center gap-3 px-4 py-3 transition-colors duration-200 ease-settle first:rounded-t-2xl last:rounded-b-2xl hover:bg-ink/[0.03]"
                   href={`/u/${encodeURIComponent(creator.id)}`}
                 >
-                  <Avatar image={creator.image} name={creator.name} />
+                  <Avatar className="size-9" image={creator.image} name={creator.name} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium">{creator.name}</span>
-                    <span className="block font-mono text-[0.65rem] text-muted-foreground">
-                      {creator.agentsCount} {creator.agentsCount === 1 ? "agente" : "agentes"} · {creator.runsCount} runs
+                    <span className="block truncate font-semibold">{creator.name}</span>
+                    <span className="block text-ink-3 text-xs tnum">
+                      {creator.agentsCount} {creator.agentsCount === 1 ? "agente" : "agentes"} · {creator.runsCount}{" "}
+                      {creator.runsCount === 1 ? "ejecución" : "ejecuciones"}
                     </span>
                   </span>
                 </Link>
@@ -65,7 +62,7 @@ export default async function AgentsPage() {
             ))}
           </ul>
         )}
-      </aside>
+      </section>
     </main>
   );
 }

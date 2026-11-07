@@ -12,6 +12,7 @@ import {
 } from "eve/events";
 import { useEveAgent } from "eve/react";
 import { AlertCircleIcon, BrainIcon, PlusIcon, SquareIcon } from "lucide-react";
+import { SimTag } from "@/components/brand";
 import { useRef, useState } from "react";
 import {
   Conversation,
@@ -163,7 +164,7 @@ export function AgentChat({
       <PromptInputTextarea
         disabled={isResuming}
         onChange={(event) => setHasInputText(event.currentTarget.value.trim().length > 0)}
-        placeholder="Enviar un mensaje…"
+        placeholder="Escribile a tu agente…"
       />
       <ComposerAction
         hasInputText={hasInputText}
@@ -175,12 +176,15 @@ export function AgentChat({
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-background text-foreground">
+    <div className="flex min-h-0 flex-1 flex-col bg-paper text-ink">
       {showConversationLayout ? (
         <>
-          <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 pt-3 sm:px-6">
-            <span className="font-mono text-[0.65rem] text-muted-foreground uppercase tracking-widest">
-              {activeSessionId ? `session ${activeSessionId.slice(0, 12)}…` : "nueva sesión"}
+          <div className="flex w-full items-center justify-between px-4 pt-2">
+            <span className="flex items-center gap-2 text-xs text-ink-3">
+              <SimTag />
+              <span className="tnum">
+                {activeSessionId ? `Sesión ${activeSessionId.slice(-6)}` : "Nueva sesión"}
+              </span>
             </span>
             {activeSessionId !== undefined ? (
               <Button
@@ -190,8 +194,8 @@ export function AgentChat({
                 type="button"
                 variant="ghost"
               >
-                <PlusIcon className="size-4" />
-                <span className="hidden font-normal text-sm sm:inline">Nueva conversación</span>
+                <PlusIcon className="size-4" strokeWidth={2.2} />
+                <span className="text-sm">Nueva</span>
               </Button>
             ) : null}
           </div>
@@ -205,7 +209,7 @@ export function AgentChat({
                 : `eve:web-chat-scroll:${activeSessionId}`
             }
           >
-            <ConversationContent className="mx-auto w-full max-w-3xl gap-6 px-4 pt-4 pb-8 sm:px-6">
+            <ConversationContent className="w-full gap-5 px-4 pt-4 pb-6">
               {agent.messages.map((message) =>
                 showPendingThinking &&
                 isPendingAssistantShell &&
@@ -234,25 +238,29 @@ export function AgentChat({
           </Conversation>
         </>
       ) : (
-        <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+        <div className="rise flex w-full flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
           <div className="flex flex-col items-center gap-3">
-            <span aria-hidden="true" className="text-5xl">
+            <span
+              aria-hidden="true"
+              className="flex size-16 items-center justify-center rounded-full bg-sheet text-3xl ring-1 ring-line"
+            >
               {agentEmoji}
             </span>
-            <h2 className="font-medium text-2xl tracking-tight">{agentName}</h2>
-            <p className="font-mono text-muted-foreground text-xs">
-              <span className="text-primary">[READY]</span> el agente propone · la persona decide
+            <h2 className="font-bold text-xl tracking-[-0.01em]">{agentName}</h2>
+            <p className="flex items-center gap-2 text-sm text-ink-3">
+              <SimTag />
+              El agente propone · vos decidís
             </p>
           </div>
           <ul className="flex flex-wrap justify-center gap-2">
             {SUGGESTIONS.map((suggestion) => (
               <li key={suggestion}>
                 <button
-                  className="rounded-full border border-border bg-card px-3 py-1.5 text-muted-foreground text-xs transition-colors hover:border-primary/50 hover:text-foreground"
+                  className="h-9 rounded-full bg-ink/[0.05] px-3.5 text-sm font-semibold text-ink-2 transition-[background-color,transform] duration-200 ease-settle hover:bg-ink/[0.08] active:scale-[0.98]"
                   onClick={() => void sendText(suggestion)}
                   type="button"
                 >
-                  Probá: {suggestion}
+                  {suggestion}
                 </button>
               </li>
             ))}
@@ -260,7 +268,7 @@ export function AgentChat({
         </div>
       )}
 
-      <div className="mx-auto w-full max-w-3xl shrink-0 px-4 pt-2 pb-4 sm:px-6">{composer}</div>
+      <div className="w-full shrink-0 px-3 pt-2 pb-[max(env(safe-area-inset-bottom),12px)]">{composer}</div>
     </div>
   );
 }
@@ -286,11 +294,12 @@ function ComposerAction({
   return (
     <PromptInputButton
       aria-label="Detener"
-      className="absolute right-2.5 bottom-2.5"
+      className="absolute right-1.5 bottom-1.5 size-10 rounded-full"
       onClick={onCancel}
+      size="icon-sm"
       variant="outline"
     >
-      <SquareIcon className="size-3 fill-current" />
+      <SquareIcon className="size-3.5 fill-current" />
     </PromptInputButton>
   );
 }
@@ -300,13 +309,13 @@ function ErrorMessage({ message }: { readonly message: string }) {
     <Message className="max-w-full" from="assistant">
       <MessageContent>
         <div
-          className="flex w-full items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm"
+          className="flex w-full items-start gap-3 rounded-2xl bg-sheet px-4 py-3 text-sm ring-1 ring-line"
           role="alert"
         >
-          <AlertCircleIcon className="mt-0.5 size-4 shrink-0 text-destructive" />
+          <AlertCircleIcon className="mt-0.5 size-4 shrink-0 text-ink-2" strokeWidth={2.2} />
           <div>
-            <p className="font-medium">La solicitud falló</p>
-            <p className="mt-0.5 text-muted-foreground">{message}</p>
+            <p className="font-semibold text-ink">No pudimos completar eso</p>
+            <p className="mt-0.5 text-ink-3">{message}</p>
           </div>
         </div>
       </MessageContent>

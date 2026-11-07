@@ -18,10 +18,11 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage["role"];
 };
 
+/** Cada mensaje nuevo se asienta en su lugar (RISE). */
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
-      "group flex w-full max-w-[95%] flex-col gap-2",
+      "group rise flex w-full max-w-[92%] flex-col gap-2",
       from === "user" ? "is-user ml-auto justify-end" : "is-assistant",
       className,
     )}
@@ -31,14 +32,17 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
 
 export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
 
+/**
+ * Usuario: burbuja tinta 6% a la derecha, rounded-[20px] con esquina inferior derecha recta.
+ * Agente: texto plano sobre papel, sin burbuja.
+ */
 export const MessageContent = ({ children, className, ...props }: MessageContentProps) => (
   <div
     className={cn(
-      "is-user:dark flex w-fit min-w-0 max-w-full flex-col gap-2 overflow-hidden text-sm",
-      "group-[.is-user]:ml-auto group-[.is-user]:rounded-2xl group-[.is-user]:bg-primary group-[.is-user]:px-4 group-[.is-user]:py-2.5 group-[.is-user]:text-primary-foreground",
-      // Streamdown links default to text-primary, which matches the user bubble background.
+      "flex w-fit min-w-0 max-w-full flex-col gap-3 overflow-hidden text-base leading-[1.45] text-ink",
+      "group-[.is-user]:ml-auto group-[.is-user]:rounded-[20px] group-[.is-user]:rounded-br-md group-[.is-user]:bg-ink/[0.06] group-[.is-user]:px-4 group-[.is-user]:py-2.5",
       "group-[.is-user]:[&_[data-streamdown=link]]:text-current",
-      "group-[.is-assistant]:w-full group-[.is-assistant]:text-foreground",
+      "group-[.is-assistant]:w-full",
       "group-data-[optimistic=true]:opacity-70",
       className,
     )}
@@ -207,7 +211,7 @@ export const MessageBranchSelector = ({ className, ...props }: MessageBranchSele
   return (
     <ButtonGroup
       className={cn(
-        "[&>*:not(:first-child)]:rounded-l-md [&>*:not(:last-child)]:rounded-r-md",
+        "[&>*:not(:first-child)]:rounded-l-full [&>*:not(:last-child)]:rounded-r-full",
         className,
       )}
       orientation="horizontal"
@@ -223,7 +227,7 @@ export const MessageBranchPrevious = ({ children, ...props }: MessageBranchPrevi
 
   return (
     <Button
-      aria-label="Previous branch"
+      aria-label="Rama anterior"
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
       size="icon-sm"
@@ -243,7 +247,7 @@ export const MessageBranchNext = ({ children, ...props }: MessageBranchNextProps
 
   return (
     <Button
-      aria-label="Next branch"
+      aria-label="Rama siguiente"
       disabled={totalBranches <= 1}
       onClick={goToNext}
       size="icon-sm"
@@ -263,10 +267,10 @@ export const MessageBranchPage = ({ className, ...props }: MessageBranchPageProp
 
   return (
     <ButtonGroupText
-      className={cn("border-none bg-transparent text-muted-foreground shadow-none", className)}
+      className={cn("border-none bg-transparent text-ink-3 shadow-none tnum", className)}
       {...props}
     >
-      {currentBranch + 1} of {totalBranches}
+      {currentBranch + 1} de {totalBranches}
     </ButtonGroupText>
   );
 };
@@ -278,7 +282,12 @@ const streamdownPlugins = { cjk, code, math, mermaid };
 export const MessageResponse = memo(
   ({ className, ...props }: MessageResponseProps) => (
     <Streamdown
-      className={cn("size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0", className)}
+      className={cn(
+        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+        // Markdown del agente sobre papel: títulos 700, enlaces tinta subrayados, código mono chico.
+        "[&_a]:text-ink [&_a]:underline [&_a]:underline-offset-4 [&_h1,&_h2,&_h3]:font-bold [&_h1,&_h2,&_h3]:tracking-[-0.01em] [&_strong]:font-semibold [&_code]:rounded-md [&_code]:bg-ink/[0.05] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.9em] [&_pre]:rounded-xl [&_table]:text-sm",
+        className,
+      )}
       plugins={streamdownPlugins}
       {...props}
     />

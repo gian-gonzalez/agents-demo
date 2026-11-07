@@ -17,7 +17,7 @@ export async function AgentChatPage({
   if (!agent) notFound();
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem)] flex-col">
+    <div className="flex h-[calc(100dvh-3.5rem)] min-h-0 w-full flex-col overflow-hidden bg-paper">
       <AgentHeader agent={agent} />
       <AuthenticatedAgentChat
         agentEmoji={agent.emoji}

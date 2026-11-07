@@ -18,11 +18,11 @@ export function SignInButton({ callbackURL = "/" }: { readonly callbackURL?: str
   }
 
   return (
-    <Button className="gap-2" disabled={pending} onClick={signIn} size="sm" type="button" variant="outline">
+    <Button className="gap-2" disabled={pending} onClick={signIn} size="sm" type="button" variant="secondary">
       <svg aria-hidden="true" className="size-3 fill-current" viewBox="0 0 24 20">
         <path d="M12 0 24 20H0L12 0Z" />
       </svg>
-      {pending ? "Redirigiendo…" : "Entrar con Vercel"}
+      {pending ? "Redirigiendo…" : "Entrar"}
     </Button>
   );
 }

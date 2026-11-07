@@ -155,7 +155,7 @@ export const ConversationTopFade = ({ className, ...props }: ConversationTopFade
       {...props}
       aria-hidden
       className={cn(
-        "pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-linear-to-b from-background via-background/80 to-transparent transition-opacity duration-150",
+        "pointer-events-none absolute inset-x-0 top-0 z-10 h-6 bg-linear-to-b from-paper via-paper/80 to-transparent transition-opacity duration-150",
         isVisible ? "opacity-100" : "opacity-0",
         className,
       )}
@@ -187,10 +187,10 @@ export const ConversationEmptyState = ({
   >
     {children ?? (
       <>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+        {icon && <div className="text-ink-3">{icon}</div>}
         <div className="space-y-1">
-          <h3 className="font-medium text-sm">{title}</h3>
-          {description && <p className="text-muted-foreground text-sm">{description}</p>}
+          <h3 className="font-semibold text-base">{title}</h3>
+          {description && <p className="text-ink-3 text-sm">{description}</p>}
         </div>
       </>
     )}
@@ -216,13 +216,13 @@ export const ConversationScrollButton = ({
     isReady &&
     !isAtBottom && (
       <Button
-        aria-label="Scroll to bottom"
+        aria-label="Ir al final"
         className={cn(
-          "absolute bottom-32 left-[50%] translate-x-[-50%] rounded-full dark:bg-background dark:hover:bg-muted",
+          "absolute bottom-6 left-[50%] translate-x-[-50%] rounded-full bg-sheet text-ink ring-1 ring-line hover:bg-sheet",
           className,
         )}
         onClick={handleScrollToBottom}
-        size="icon"
+        size="icon-sm"
         type="button"
         variant="outline"
         {...props}
@@ -278,10 +278,7 @@ export const ConversationDownload = ({
 
   return (
     <Button
-      className={cn(
-        "absolute top-4 right-4 rounded-full dark:bg-background dark:hover:bg-muted",
-        className,
-      )}
+      className={cn("absolute top-4 right-4 rounded-full bg-sheet ring-1 ring-line hover:bg-sheet", className)}
       onClick={handleDownload}
       size="icon"
       type="button"

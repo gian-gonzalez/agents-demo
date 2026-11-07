@@ -25,10 +25,10 @@ export function LiveRefresh({
 
 export function LiveBadge() {
   return (
-    <span className="inline-flex items-center gap-2 font-mono text-[0.65rem] text-primary uppercase tracking-widest">
+    <span className="inline-flex h-6 items-center gap-1.5 rounded-full bg-ink/[0.05] px-2 font-semibold text-ink-2 text-xs">
       <span className="relative flex size-1.5">
-        <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-75" />
-        <span className="relative inline-flex size-1.5 rounded-full bg-primary" />
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-ink opacity-40 motion-reduce:hidden" />
+        <span className="relative inline-flex size-1.5 rounded-full bg-ink" />
       </span>
       En vivo
     </span>

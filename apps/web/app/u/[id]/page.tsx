@@ -24,24 +24,23 @@ export default async function CreatorPage({ params }: { readonly params: Params 
   const runs = publicAgents.reduce((sum, agent) => sum + agent.runsCount, 0);
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6">
+    <main className="flex w-full flex-1 flex-col gap-6 px-4 pt-8 pb-12">
       <header className="flex items-center gap-4">
         <Avatar className="size-14 text-base" image={first.ownerImage} name={first.ownerName} />
         <div className="min-w-0">
-          <p className="font-mono text-muted-foreground text-xs uppercase tracking-[0.2em]">Creador</p>
-          <h1 className="truncate font-medium text-2xl tracking-tight">{first.ownerName}</h1>
-          <p className="font-mono text-muted-foreground text-xs">
-            {publicAgents.length} {publicAgents.length === 1 ? "agente" : "agentes"} · {runs} runs
+          <p className="font-semibold text-ink-3 text-sm">Creador</p>
+          <h1 className="truncate font-bold text-[28px] leading-[1.15] tracking-[-0.02em]">{first.ownerName}</h1>
+          <p className="text-ink-3 text-xs tnum">
+            {publicAgents.length} {publicAgents.length === 1 ? "agente" : "agentes"} · {runs}{" "}
+            {runs === 1 ? "ejecución" : "ejecuciones"}
           </p>
         </div>
       </header>
 
       {publicAgents.length === 0 ? (
-        <p className="rounded-lg border border-border border-dashed p-6 font-mono text-muted-foreground text-sm">
-          [EMPTY] Sus agentes son privados.
-        </p>
+        <p className="rounded-2xl bg-sheet px-6 py-8 text-center text-ink-2 ring-1 ring-line">Sus agentes son privados.</p>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="flex flex-col gap-3">
           {publicAgents.map((agent) => (
             <li key={agent.id}>
               <AgentCard agent={agent} showCreator={false} />

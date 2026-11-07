@@ -24,6 +24,7 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import { SimTag, StatusPill, type Verdict } from "@/components/brand";
 import { BashToolContent, ToolInput, ToolOutput } from "@/components/ai-elements/tool";
 import { Button } from "@/components/ui/button";
 import {
@@ -190,7 +191,11 @@ function Steps({
       {steps.length === 1 ? (
         lines
       ) : (
-        <TraceCollapsible onOpenChange={setOpen} open={open ?? (working || waiting)}>
+        <TraceCollapsible
+          className="overflow-hidden rounded-2xl bg-sheet ring-1 ring-line"
+          onOpenChange={setOpen}
+          open={open ?? (working || waiting)}
+        >
           <TraceCollapsibleTrigger>
             <TraceLine status={working ? "running" : failed > 0 ? "error" : undefined}>
               <TraceTitle>
@@ -271,13 +276,19 @@ function ToolLine({
       ? "Respuesta enviada"
       : undefined;
   const Icon = part.name === "bash" ? TerminalIcon : part.kind === "agent" ? BotIcon : WrenchIcon;
+  const verdict = verdictOf(part, state);
   const line = (
     <TraceLine status={status}>
       <TraceIcon>
         <Icon />
       </TraceIcon>
       <TraceTitle>{part.label}</TraceTitle>
-      {(answered ?? note) ? <TraceDescription>{answered ?? note}</TraceDescription> : null}
+      {isSimulatedTool(part.name) ? <SimTag /> : null}
+      {verdict !== undefined ? (
+        <StatusPill size="sm" verdict={verdict} />
+      ) : (answered ?? note) ? (
+        <TraceDescription>{answered ?? note}</TraceDescription>
+      ) : null}
     </TraceLine>
   );
   if (part.input === undefined && part.output === undefined && part.error === undefined)
@@ -286,7 +297,7 @@ function ToolLine({
   return (
     <TraceCollapsible>
       <TraceCollapsibleTrigger>{line}</TraceCollapsibleTrigger>
-      <TraceCollapsibleContent className="space-y-2 text-foreground">
+      <TraceCollapsibleContent className="space-y-2 text-ink">
         {part.name === "bash" ? (
           <BashToolContent
             errorText={part.error?.message}
@@ -357,7 +368,7 @@ function QuestionRequest({
 
   return (
     <Questionnaire
-      className="gap-4 rounded-xl border bg-card p-4"
+      className="gap-4 rounded-2xl bg-sheet p-4 ring-1 ring-line"
       // Validation reads disabled answers as missing, so locking a submitted form in place would
       // flag it invalid. Remounting restores the answer from the response instead.
       key={disabled ? "locked" : "open"}
@@ -365,7 +376,7 @@ function QuestionRequest({
       shortcuts="numbers"
     >
       <QuestionnaireItem name={interaction.interactionId} required>
-        <QuestionnaireTitle className="text-sm font-medium">
+        <QuestionnaireTitle className="text-base font-semibold">
           {interaction.request.prompt}
         </QuestionnaireTitle>
         <QuestionnaireChoices>
@@ -399,7 +410,9 @@ function QuestionRequest({
       </QuestionnaireItem>
       {disabled ? null : (
         <QuestionnaireActions>
-          <QuestionnaireSubmit size="sm">Responder</QuestionnaireSubmit>
+          <QuestionnaireSubmit size="sm" variant="secondary">
+            Responder
+          </QuestionnaireSubmit>
         </QuestionnaireActions>
       )}
     </Questionnaire>
@@ -412,19 +425,19 @@ function AttachmentPart({ part }: { readonly part: EveFilePart }) {
   const isImage = part.mediaType.startsWith("image/") && part.url !== undefined;
   const Icon = isImage ? ImageIcon : FileIcon;
   const body = (
-    <span className="flex max-w-sm items-center gap-3 rounded-md border bg-background/60 p-2 text-sm">
+    <span className="flex max-w-sm items-center gap-3 rounded-xl bg-sheet p-2 text-sm ring-1 ring-line">
       {isImage ? (
-        <img alt={label} className="size-12 shrink-0 rounded-sm object-cover" src={part.url} />
+        <img alt={label} className="size-12 shrink-0 rounded-lg object-cover" src={part.url} />
       ) : (
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-muted text-muted-foreground">
-          <Icon className="size-4" />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-ink/[0.05] text-ink-2">
+          <Icon className="size-4" strokeWidth={2} />
         </span>
       )}
       <span className="min-w-0 flex-1">
-        <span className="block truncate font-medium">{label}</span>
-        {detail ? <span className="block truncate text-muted-foreground">{detail}</span> : null}
+        <span className="block truncate font-semibold text-ink">{label}</span>
+        {detail ? <span className="block truncate text-ink-3">{detail}</span> : null}
       </span>
-      {part.url ? <ExternalLinkIcon className="size-4 shrink-0 text-muted-foreground" /> : null}
+      {part.url ? <ExternalLinkIcon className="size-4 shrink-0 text-ink-3" /> : null}
     </span>
   );
 
@@ -476,51 +489,33 @@ function SignInPrompt({ part }: { readonly part: EveInteractionPart }) {
     : part.request.prompt;
 
   return (
-    <div
-      className={cn(
-        "space-y-3 rounded-md border p-3",
-        isAuthorized
-          ? "border-emerald-500/30 bg-emerald-500/5"
-          : isCompleted
-            ? "border-destructive/30 bg-destructive/5"
-            : "border-blue-500/30 bg-blue-500/5",
-      )}
-    >
+    <div className="space-y-3 rounded-2xl bg-sheet p-4 ring-1 ring-line">
       <div className="flex items-start gap-3">
-        <span
-          className={cn(
-            "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full",
-            isAuthorized
-              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-              : isCompleted
-                ? "bg-destructive/10 text-destructive"
-                : "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-          )}
-        >
-          <Icon className="size-4" />
+        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-ink/[0.05] text-ink">
+          <Icon className="size-4" strokeWidth={2.2} />
         </span>
         <div className="min-w-0 flex-1 space-y-2">
-          <p className="font-medium text-sm">
+          <p className="font-semibold text-base text-ink">
             {isCompleted
               ? isAuthorized
                 ? `${name} conectado`
                 : `Autorización de ${name}: ${signInEnding(part.outcome ?? "withdrawn")}`
               : `Conectar ${name}`}
           </p>
-          <p className="text-muted-foreground text-sm">{description}</p>
+          <p className="text-ink-3 text-sm">{description}</p>
           {!isCompleted && instructions !== undefined && instructions !== description ? (
-            <p className="text-muted-foreground text-sm">{instructions}</p>
+            <p className="text-ink-3 text-sm">{instructions}</p>
           ) : null}
           {!isCompleted && signIn?.userCode ? (
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-muted-foreground">Código</span>
-              <code className="rounded-md bg-background px-2 py-1 font-mono">
+              <span className="text-ink-3">Código</span>
+              <code className="rounded-md bg-ink/[0.05] px-2 py-1 font-mono text-ink">
                 {signIn.userCode}
               </code>
             </div>
           ) : null}
           {!isCompleted && signIn?.url ? (
-            <Button asChild size="sm">
+            <Button asChild size="sm" variant="secondary">
               <a href={signIn.url} rel="noreferrer" target="_blank">
                 <ExternalLinkIcon className="size-4" />
                 Iniciar sesión con {name}
@@ -559,41 +554,118 @@ function InteractionActions({
   const selectedOption = interaction.request.options?.find(
     (option) => option.id === answer?.optionId,
   );
+  const isApproval = interaction.request.kind === "approval";
+  const answeredVerdict: Verdict | undefined =
+    answer === undefined ? undefined : optionVerdict(selectedOption ?? answer.optionId);
 
   return (
-    <div className="space-y-3 rounded-md border border-yellow-500/30 bg-yellow-500/5 p-3">
-      <p className="text-muted-foreground text-sm">{interaction.request.prompt}</p>
+    <div
+      className={cn(
+        "rise space-y-3 rounded-2xl bg-sheet p-4 ring-1",
+        answer === undefined ? "ring-plum/30" : "ring-line",
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        {isApproval ? (
+          <StatusPill verdict={answeredVerdict ?? "pending"} />
+        ) : null}
+        <SimTag />
+      </div>
+      <p className="text-base font-semibold text-ink">{stripApprovalPrefix(interaction.request.prompt)}</p>
       {answer ? (
-        <p className="font-medium text-sm">
-          Respondiste: {selectedOption?.label ?? answer.text ?? answer.optionId}
+        <p className="text-sm text-ink-3">
+          Respondiste: {optionLabel(selectedOption) ?? answer.text ?? answer.optionId}
         </p>
       ) : (
-        <div className="flex flex-wrap gap-2">
-          {interaction.request.options?.map((option, index) => (
-            <Button
-              disabled={!asks.canRespond(interaction.interactionId)}
-              key={option.id}
-              onClick={() => {
-                void asks.onAnswers([
-                  {
-                    optionId: option.id,
-                    interactionId: interaction.interactionId,
-                  },
-                ]);
-              }}
-              size="sm"
-              type="button"
-              variant={
-                option.style === "danger" ? "destructive" : index === 0 ? "default" : "outline"
-              }
-            >
-              {option.label}
-            </Button>
-          ))}
+        <div className="grid grid-cols-2 gap-2">
+          {interaction.request.options?.map((option) => {
+            const verdict = optionVerdict(option);
+            return (
+              <Button
+                className={cn(
+                  verdict === "approved" && "bg-leaf-soft text-leaf hover:bg-leaf/15",
+                  verdict === "denied" && "bg-chili-soft text-chili hover:bg-chili/15",
+                )}
+                disabled={!asks.canRespond(interaction.interactionId)}
+                key={option.id}
+                onClick={() => {
+                  void asks.onAnswers([
+                    {
+                      optionId: option.id,
+                      interactionId: interaction.interactionId,
+                    },
+                  ]);
+                }}
+                type="button"
+                variant="secondary"
+              >
+                {optionLabel(option)}
+              </Button>
+            );
+          })}
         </div>
       )}
     </div>
   );
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Veredictos Mango: leaf / chili / plum solo para decisiones del motor.                      */
+/* ------------------------------------------------------------------------------------------ */
+
+type InteractionOption = NonNullable<Interaction["request"]["options"]>[number];
+
+/** Las tools belo del demo operan una cuenta simulada: siempre llevan SimTag. */
+function isSimulatedTool(name: string): boolean {
+  return /^(account|exchange|ramp|card|transaction)_/u.test(name);
+}
+
+/** "HUMAN_APPROVAL_REQUIRED · Pagar…" → la pill ya dice que espera tu OK. */
+function stripApprovalPrefix(prompt: string): string {
+  return prompt.replace(/^HUMAN_APPROVAL_REQUIRED\s*[·:-]?\s*/u, "");
+}
+
+/** Qué veredicto representa una opción de aprobación. */
+function optionVerdict(option: InteractionOption | string | undefined): Verdict | undefined {
+  if (option === undefined) return undefined;
+  const id = typeof option === "string" ? option : option.id;
+  const style = typeof option === "string" ? undefined : option.style;
+  if (/^(approve|accept|allow|yes|confirm)$/iu.test(id)) return "approved";
+  if (style === "danger" || /^(deny|reject|decline|no|cancel)$/iu.test(id)) return "denied";
+  return undefined;
+}
+
+/** Copy en voseo para las opciones estándar del motor; el resto conserva su label. */
+function optionLabel(option: InteractionOption | undefined): string | undefined {
+  if (option === undefined) return undefined;
+  switch (optionVerdict(option)) {
+    case "approved":
+      return "Aprobar";
+    case "denied":
+      return "Rechazar";
+    default:
+      return option.label;
+  }
+}
+
+/**
+ * El veredicto de una llamada: solo cuando hubo (o hay) una decisión humana o del chequeo de
+ * riesgo/límite. Una consulta de saldo completada no es un veredicto.
+ */
+function verdictOf(part: EveToolPart, state: CallState | undefined): Verdict | undefined {
+  const output = part.output;
+  if (typeof output === "object" && output !== null) {
+    const record = output as { type?: unknown; status?: unknown };
+    if (record.type === "denied") return "denied";
+    if (record.status === "APPROVED_AND_EXECUTED") return "approved";
+  }
+  if (state === "rejected") return "denied";
+  if (state === "approval") return "pending";
+  if (part.interaction?.request.kind === "approval") {
+    if (state === "completed") return "approved";
+    if (state === "cancelled") return "denied";
+  }
+  return undefined;
 }
 
 function partKey(part: EveMessagePart, index: number): string {

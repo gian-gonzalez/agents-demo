@@ -245,8 +245,9 @@ export const PromptInput = ({
       <form className="w-full" onSubmit={handleSubmit} ref={formRef} {...props}>
         <InputGroup
           className={cn(
-            "overflow-hidden rounded-2xl bg-card/80 shadow-sm backdrop-blur-md",
-            "focus-within:border-foreground! has-[[data-slot=input-group-control]:focus-visible]:border-foreground!",
+            // Composer Mango: pill blanca flotante, única sombra de la pantalla.
+            "overflow-hidden rounded-[26px] border-0 bg-sheet shadow-float ring-1 ring-line transition-[box-shadow] duration-200 ease-settle",
+            "focus-within:ring-ink/30 has-[[data-slot=input-group-control]:focus-visible]:border-0 has-[[data-slot=input-group-control]:focus-visible]:ring-ink/30 has-[[data-slot=input-group-control]:focus-visible]:ring-1",
             className,
           )}
         >
@@ -261,7 +262,7 @@ export const PromptInputTextarea = ({
   onChange,
   onKeyDown,
   className,
-  placeholder = "What would you like to know?",
+  placeholder = "Escribile a tu agente…",
   ...props
 }: ComponentProps<typeof InputGroupTextarea>) => {
   const attachments = usePromptInputAttachments();
@@ -318,7 +319,10 @@ export const PromptInputTextarea = ({
 
   return (
     <InputGroupTextarea
-      className={cn("field-sizing-content max-h-48 min-h-18 text-base md:text-sm", className)}
+      className={cn(
+        "field-sizing-content max-h-40 min-h-[52px] py-[14px] pr-14 pl-5 text-base leading-6 text-ink placeholder:text-ink-3 md:text-base",
+        className,
+      )}
       name="message"
       onCompositionEnd={handleCompositionEnd}
       onCompositionStart={handleCompositionStart}
@@ -338,11 +342,7 @@ export const PromptInputButton = ({
   ...props
 }: ComponentProps<typeof InputGroupButton>) => (
   <InputGroupButton
-    className={cn(
-      "rounded-full",
-      variant === "outline" && "bg-card hover:bg-card dark:hover:bg-input/30",
-      className,
-    )}
+    className={cn("rounded-full", className)}
     size={size ?? (Children.count(props.children) > 1 ? "sm" : "icon-sm")}
     type="button"
     variant={variant}
@@ -358,13 +358,14 @@ export const PromptInputSubmit = ({
   ...props
 }: ComponentProps<typeof InputGroupButton>) => (
   <InputGroupButton
-    aria-label="Submit"
-    className={cn("absolute right-2.5 bottom-2.5 rounded-full", className)}
+    aria-label="Enviar"
+    // La única acción mango de la pantalla: círculo de 40px.
+    className={cn("absolute right-1.5 bottom-1.5 size-10 rounded-full bg-mango text-ink hover:bg-[#f5a90f]", className)}
     size={size}
     type="submit"
     variant={variant}
     {...props}
   >
-    {children ?? <ArrowUpIcon className="size-4" />}
+    {children ?? <ArrowUpIcon className="size-5" strokeWidth={2.4} />}
   </InputGroupButton>
 );

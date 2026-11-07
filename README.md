@@ -1,6 +1,6 @@
 # belo agentic · demo de agentes creados por usuarios
 
-Demo de **agentes autónomos de IA desplegados en Vercel** con [eve](https://eve.dev), el framework de agentes de Vercel. Cada persona entra con su cuenta de Vercel, crea sus propios agentes de *belo Agentic Banking* (https://agentic.belo.app, hoy en lista de espera, por eso la cuenta es mock) y cualquiera puede probarlos. La home muestra en vivo quién creó qué.
+Demo **mango** de agentes autónomos de IA desplegados en Vercel con [eve](https://eve.dev), el framework de agentes de Vercel. Cada persona entra con su cuenta de Vercel, crea sus propios agentes de *belo Agentic Banking* (https://agentic.belo.app, hoy en lista de espera, por eso la cuenta es mock) y cualquiera puede probarlos. La home muestra en vivo quién creó qué.
 
 Regla de oro de belo, implementada con el human-in-the-loop de eve: **el agente propone, la persona decide**. Todo movimiento de dinero queda en `HUMAN_APPROVAL_REQUIRED` hasta que la persona aprueba.
 
@@ -47,7 +47,11 @@ pnpm dev          # solo el agente, con la TUI de eve
 pnpm typecheck && pnpm typecheck:web
 ```
 
-En local no hay sign-in (`localDev()`), el usuario es "Dev local" y, sin `DATABASE_URL`, los agentes viven en memoria.
+En local no hay sign-in (`localDev()`) y el usuario es "Dev local". Para que la web y el agente compartan la misma DB, `apps/web/.env.local` es un symlink a `../../.env.local` (Next solo lee el `.env` de su carpeta). Sin `DATABASE_URL` cada proceso usa su propio store en memoria, así que el chat con `x-agent-id` solo funciona con Postgres. Con `next dev` solo, `next.config.ts` reenvía `/eve/*` a `eve dev` en :2000 (`EVE_DEV_ORIGIN` para cambiarlo); en Vercel lo rutea `vercel.ts`.
+
+## Diseño
+
+Sistema **Mango, calmo**: papel crema, un solo acento mango por pantalla, colores de veredicto (leaf / chili / plum) solo para decisiones del motor, una familia tipográfica (Archivo). Forma de app mobile tranquila: máx. 480px, centrada en desktop. Fuente de verdad: tokens en `apps/web/app/globals.css` (`@theme`) y primitivas en `apps/web/components/brand.tsx` (MangoMark, Wordmark, CardArt, StatusPill, SimTag, Chip, ProgressBar). Todo pago, carga o saldo simulado lleva `SimTag`.
 
 ## Deploy
 
