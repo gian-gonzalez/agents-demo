@@ -19,11 +19,12 @@ export default async function HomePage() {
         <h1 className="font-bold text-[28px] leading-[1.1] tracking-[-0.02em] md:text-[40px] lg:text-[52px] lg:tracking-[-0.03em]">
           Tu agente opera.
           <br />
-          <span className="text-ink-3">Vos decidís.</span>
+          <span className="text-ink-3">En automático.</span>
         </h1>
         <p className="max-w-xl text-ink-2 md:text-lg">
           Cada persona crea su propio agente con permisos sobre una cuenta belo de prueba. El agente
-          propone pagos, cambios y movimientos; nada se ejecuta sin tu OK.
+          ejecuta pagos, cambios y movimientos por sí solo, dentro del límite por operación y el
+          presupuesto mensual que le fijás.
         </p>
         <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:gap-3">
           <Button asChild>

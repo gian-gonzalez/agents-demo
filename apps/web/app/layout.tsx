@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s · mango",
   },
   description:
-    "Tu plata, tus reglas. Creá tu agente de plata y mirá cómo opera sobre una cuenta belo de prueba: el agente propone, vos decidís.",
+    "Tu plata, tus reglas. Creá tu agente de plata y mirá cómo opera solo sobre una cuenta belo de prueba: ejecuta en automático, dentro de los límites que le ponés.",
 };
 
 export const viewport: Viewport = {

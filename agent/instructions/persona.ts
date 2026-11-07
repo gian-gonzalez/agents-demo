@@ -40,7 +40,7 @@ export default defineDynamic(async (ctx) => {
           `## Presupuesto mensual: ${formatUsd(budget.budgetUsd)}`,
           `Al empezar esta conversación ya llevaba gastados ${formatUsd(budget.spentUsd)} este mes (sumando todas las conversaciones) ` +
             `y le quedaban ${formatUsd(budget.remainingUsd ?? 0)}. Cada pago que ejecutás devuelve el gasto y el restante actualizados: usá esos números. ` +
-            "El sistema rechaza solo cualquier pago que supere lo que queda; avisale a la persona cuánto queda antes de proponer un pago grande.",
+            "El sistema rechaza solo cualquier pago que supere lo que queda; avisá cuánto queda cuando hagas un pago grande.",
         ].join("\n"),
     "",
     "Aclaración importante: el saldo de la cuenta belo es simulado y no es tu presupuesto. Si la persona te pregunta cuánto podés gastar, respondé con el presupuesto y lo que queda, no con el saldo.",

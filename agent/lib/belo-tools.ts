@@ -6,7 +6,7 @@
  * proposes, the person decides.
  */
 import { defineTool, type DynamicToolEntry } from "eve/tools";
-import { always, never } from "eve/tools/approval";
+import { never } from "eve/tools/approval";
 import { z } from "zod";
 import {
   CURRENCIES,
@@ -101,19 +101,14 @@ export function buildBeloTools(profile: AgentProfile) {
   if (granted.has("exchange.fx")) {
     tools.exchange_fx = defineTool({
       description:
-        "Propone un cambio de moneda dentro de la cuenta (por ejemplo ARS → USDC). Requiere aprobación de la persona antes de ejecutarse.",
+        "Ejecuta un cambio de moneda dentro de la cuenta (por ejemplo ARS → USDC). Se ejecuta en el acto, sin pedir confirmación.",
       inputSchema: z.object({
         from: currencySchema,
         to: currencySchema,
         amount: z.number().positive().describe("Monto en la moneda de origen"),
       }),
       label: { start: ({ from, to, amount }) => `Cambiar ${formatMoney(amount, from)} a ${to}` },
-      approval: {
-        request: always(),
-        prompt: ({ input }) =>
-          `HUMAN_APPROVAL_REQUIRED · Cambiar ${formatMoney(input.amount, input.from)} a ${input.to} ` +
-          `(cotización ${fxRate(input.from, input.to).toLocaleString("es-AR")})`,
-      },
+      approval: never(),
       async execute({ from, to, amount }) {
         if (from === to) throw new Error("La moneda de origen y destino son iguales.");
         const acc = account.get();
@@ -132,7 +127,7 @@ export function buildBeloTools(profile: AgentProfile) {
   if (granted.has("ramp.fiat_crypto")) {
     tools.ramp_fiat_crypto = defineTool({
       description:
-        "Propone un on-ramp (fiat → crypto) u off-ramp (crypto → fiat) con una cuenta bancaria externa. Disponible en LATAM, no en US/EU. Requiere aprobación.",
+        "Ejecuta un on-ramp (fiat → crypto) u off-ramp (crypto → fiat) con una cuenta bancaria externa. Disponible en LATAM, no en US/EU. Se ejecuta en el acto.",
       inputSchema: z.object({
         direction: z.enum(["on", "off"]).describe("on: fiat → crypto, off: crypto → fiat"),
         fiat: z.enum(["ARS", "USD"]),
@@ -140,14 +135,8 @@ export function buildBeloTools(profile: AgentProfile) {
         amount: z.number().positive().describe("Monto en la moneda de origen"),
         method: z.enum(["transferencia_bancaria", "pix"]).default("transferencia_bancaria"),
       }),
-      label: { start: ({ direction }) => (direction === "on" ? "Proponer on-ramp" : "Proponer off-ramp") },
-      approval: {
-        request: always(),
-        prompt: ({ input }) =>
-          input.direction === "on"
-            ? `HUMAN_APPROVAL_REQUIRED · On-ramp: ingresar ${formatMoney(input.amount, input.fiat)} vía ${input.method} y convertir a ${input.crypto}`
-            : `HUMAN_APPROVAL_REQUIRED · Off-ramp: enviar ${formatMoney(input.amount, input.crypto)} a tu cuenta bancaria en ${input.fiat}`,
-      },
+      label: { start: ({ direction }) => (direction === "on" ? "On-ramp" : "Off-ramp") },
+      approval: never(),
       async execute({ direction, fiat, crypto, amount, method }) {
         if (direction === "on") {
           const received = amount * fxRate(fiat, crypto);
@@ -167,7 +156,7 @@ export function buildBeloTools(profile: AgentProfile) {
   if (granted.has("card.manage")) {
     tools.card_manage = defineTool({
       description:
-        "Gestiona las tarjetas belo: listar, emitir una nueva (requiere aprobación), congelar o descongelar.",
+        "Gestiona las tarjetas belo: listar, emitir una nueva, congelar o descongelar. Todo se ejecuta en el acto.",
       inputSchema: z.object({
         action: z.enum(["list", "issue", "freeze", "unfreeze"]),
         cardId: z.string().optional().describe("Requerido para freeze/unfreeze"),
@@ -177,10 +166,7 @@ export function buildBeloTools(profile: AgentProfile) {
         start: ({ action, label }) =>
           action === "issue" ? `Emitir tarjeta ${label ?? ""}`.trim() : action === "list" ? "Listar tarjetas" : `${action === "freeze" ? "Congelar" : "Descongelar"} tarjeta`,
       },
-      approval: {
-        request: ({ toolInput }) => (toolInput?.action === "issue" ? "user-approval" : "not-applicable"),
-        prompt: ({ input }) => `HUMAN_APPROVAL_REQUIRED · Emitir nueva tarjeta "${input.label ?? "sin nombre"}" con límite mensual de US$${profile.cardLimitUsd}`,
-      },
+      approval: never(),
       async execute({ action, cardId, label }) {
         if (action === "list") {
           return account.get().cards.map((c) => ({ ...c, limitUsd: profile.cardLimitUsd }));
@@ -206,14 +192,14 @@ export function buildBeloTools(profile: AgentProfile) {
   if (granted.has("transaction.approve")) {
     tools.transaction_pay = defineTool({
       description:
-        "Propone un pago con tarjeta belo a un comercio. Corre un chequeo de riesgo, el límite por operación y el presupuesto mensual del agente (gasto acumulado entre todas las conversaciones); si pasa, queda en HUMAN_APPROVAL_REQUIRED hasta que la persona apruebe.",
+        "Paga con tarjeta belo a un comercio, en el acto y sin pedir confirmación. Antes corre un chequeo de riesgo, el límite por operación y el presupuesto mensual del agente (gasto acumulado entre todas las conversaciones); si alguno falla, el sistema rechaza el pago.",
       inputSchema: z.object({
         merchant: z.string().min(1),
         amountUsd: z.number().positive(),
         cardId: z.string().optional(),
         memo: z.string().optional(),
       }),
-      label: { start: ({ merchant, amountUsd }) => `Proponer pago de US$${amountUsd.toFixed(2)} a ${merchant}` },
+      label: { start: ({ merchant, amountUsd }) => `Pagar US$${amountUsd.toFixed(2)} a ${merchant}` },
       approval: {
         request: async ({ toolInput }) => {
           const merchant = String(toolInput?.merchant ?? "").toLowerCase();
@@ -234,10 +220,9 @@ export function buildBeloTools(profile: AgentProfile) {
                 `ya gastó ${formatUsd(budget.spentUsd)} este mes y le quedan ${formatUsd(budget.remainingUsd)}; el pago es ${formatUsd(amount)}.`,
             };
           }
-          return "user-approval";
+          // Pasó riesgo, límite y presupuesto: se ejecuta solo, sin confirmación humana.
+          return "approved";
         },
-        prompt: ({ input }) =>
-          `HUMAN_APPROVAL_REQUIRED · Pagar US$${input.amountUsd.toFixed(2)} a ${input.merchant}` + (input.memo ? ` · ${input.memo}` : ""),
       },
       async execute({ merchant, amountUsd, cardId, memo }, ctx) {
         const acc = account.get();

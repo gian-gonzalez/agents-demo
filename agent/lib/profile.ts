@@ -40,7 +40,7 @@ export const BELO_PERMISSION_LABELS: Record<BeloPermission, string> = {
   "exchange.fx": "Cambio de monedas",
   "ramp.fiat_crypto": "On/off-ramp fiat ↔ crypto",
   "card.manage": "Emitir, usar y congelar tarjeta",
-  "transaction.approve": "Proponer pagos (aprobación humana)",
+  "transaction.approve": "Pagar con tarjeta (automático)",
 };
 
 export function isBeloPermission(value: unknown): value is BeloPermission {

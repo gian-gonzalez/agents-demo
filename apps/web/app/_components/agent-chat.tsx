@@ -249,7 +249,7 @@ export function AgentChat({
             <h2 className="font-bold text-xl tracking-[-0.01em]">{agentName}</h2>
             <p className="flex items-center gap-2 text-sm text-ink-3">
               <SimTag />
-              El agente propone · vos decidís
+              Ejecuta solo · dentro de tus límites
             </p>
           </div>
           <ul className="flex flex-wrap justify-center gap-2">

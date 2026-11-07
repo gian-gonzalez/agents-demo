@@ -2,7 +2,7 @@
 
 Demo **mango** de agentes autónomos de IA desplegados en Vercel con [eve](https://eve.dev), el framework de agentes de Vercel. Cada persona entra con su cuenta de Vercel, crea sus propios agentes de *belo Agentic Banking* (https://agentic.belo.app, hoy en lista de espera, por eso la cuenta es mock) y cualquiera puede probarlos. La home muestra en vivo quién creó qué.
 
-Regla de oro de belo, implementada con el human-in-the-loop de eve: **el agente propone, la persona decide**. Todo movimiento de dinero queda en `HUMAN_APPROVAL_REQUIRED` hasta que la persona aprueba.
+Los agentes **ejecutan en automático**: pagos, cambios, on/off-ramp y emisión de tarjetas se hacen en el acto, sin confirmación humana. Los frenos son del sistema: límite por operación, presupuesto mensual real y chequeo de riesgo (el motor devuelve `denied` con el motivo). Las tools siguen declarando su política con `approval`, así que volver al human-in-the-loop es cambiar `never()` / `"approved"` por `always()` / `"user-approval"` en `agent/lib/belo-tools.ts`.
 
 ## Cómo está armado
 
@@ -13,7 +13,7 @@ agent/                      el único agente eve del proyecto (se "disfraza" del
 ├── instructions/persona.ts defineDynamic → nombre, instrucciones y permisos del agente de la sesión
 ├── tools/belo.ts           defineDynamic → solo las capacidades belo que el dueño habilitó
 ├── lib/belo-mock.ts        cuenta belo mock en estado de sesión (saldos, rendimientos, tarjetas, movimientos)
-├── lib/belo-tools.ts       las 7 capacidades belo como tools con aprobación humana
+├── lib/belo-tools.ts       las 7 capacidades belo como tools (ejecución automática, frenos del sistema)
 ├── lib/profiles.ts         carga el perfil del agente (header x-agent-id → DB)
 ├── channels/eve.ts         auth: Sign in with Vercel (Better Auth) + x-agent-id → attributes.agentId
 └── hooks/runs.ts           turn.settled → registra la ejecución (usuario, costo, tokens)
@@ -28,19 +28,19 @@ Cómo un solo deployment sirve agentes de muchos usuarios: el chat envía `x-age
 
 ## Capacidades belo (mock)
 
-| Permiso               | Tool               | Aprobación humana                 |
-| --------------------- | ------------------ | --------------------------------- |
-| `account.balances`    | `account_balances` | no                                |
-| `account.yields`      | `account_yields`   | no                                |
-| `account.activity`    | `account_activity` | no                                |
-| `exchange.fx`         | `exchange_fx`      | siempre                           |
-| `ramp.fiat_crypto`    | `ramp_fiat_crypto` | siempre                           |
-| `card.manage`         | `card_manage`      | al emitir tarjeta                 |
-| `transaction.approve` | `transaction_pay`  | siempre; riesgo, límite por operación y presupuesto mensual → denied |
+| Permiso               | Tool               | Ejecución                                                            |
+| --------------------- | ------------------ | -------------------------------------------------------------------- |
+| `account.balances`    | `account_balances` | lectura                                                              |
+| `account.yields`      | `account_yields`   | lectura                                                              |
+| `account.activity`    | `account_activity` | lectura                                                              |
+| `exchange.fx`         | `exchange_fx`      | automática                                                           |
+| `ramp.fiat_crypto`    | `ramp_fiat_crypto` | automática                                                           |
+| `card.manage`         | `card_manage`      | automática                                                           |
+| `transaction.approve` | `transaction_pay`  | automática; riesgo, límite por operación o presupuesto mensual → denied |
 
 ## Presupuesto mensual (real)
 
-El saldo belo es mock y vuelve a la semilla en cada conversación; el **presupuesto mensual** no. Al crear un agente se puede fijar un tope en US$ por mes (`agents.monthly_budget_usd`, opcional). Cada pago aprobado y ejecutado se guarda en la tabla `spend` (agente, sesión, comercio, monto) y `transaction_pay` suma lo gastado en el mes calendario (UTC) antes de proponer: si el pago supera lo que queda, lo rechaza con `BUDGET_EXCEEDED` sin pedir aprobación. Las instrucciones del agente incluyen el presupuesto y lo gastado al inicio de la sesión (memoizado: el system prompt debe ser estable dentro de una conversación), y cada pago devuelve el gasto y el restante actualizados. La página del agente muestra "Usado este mes" con barra de progreso.
+El saldo belo es mock y vuelve a la semilla en cada conversación; el **presupuesto mensual** no. Al crear un agente se puede fijar un tope en US$ por mes (`agents.monthly_budget_usd`, opcional). Cada pago aprobado y ejecutado se guarda en la tabla `spend` (agente, sesión, comercio, monto) y `transaction_pay` suma lo gastado en el mes calendario (UTC) antes de proponer: si el pago supera lo que queda, lo rechaza con `BUDGET_EXCEEDED`. Las instrucciones del agente incluyen el presupuesto y lo gastado al inicio de la sesión (memoizado: el system prompt debe ser estable dentro de una conversación), y cada pago devuelve el gasto y el restante actualizados. La página del agente muestra "Usado este mes" con barra de progreso.
 
 ## Desarrollo
 

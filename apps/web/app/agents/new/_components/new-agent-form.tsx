@@ -14,7 +14,7 @@ import { createAgentAction, type NewAgentFormState } from "../actions";
 const DEFAULT_PERMISSIONS: readonly string[] = BELO_PERMISSIONS.filter((p) => p !== "ramp.fiat_crypto");
 
 const INSTRUCTIONS_PLACEHOLDER =
-  "Sos mi asistente de gastos. Cuando te pida pagar algo, chequeá el saldo primero y proponé el pago con la tarjeta principal. Si un gasto supera US$200, preguntame antes de proponerlo.";
+  "Sos mi asistente de gastos. Cuando te pida pagar algo, chequeá el saldo primero y pagá con la tarjeta principal. Solo gastá hasta US$200 por mes.";
 
 export function NewAgentForm() {
   const [state, action, pending] = useActionState<NewAgentFormState, FormData>(createAgentAction, {});
@@ -75,7 +75,7 @@ export function NewAgentForm() {
             id="description"
             maxLength={140}
             name="description"
-            placeholder="Controla mis gastos del mes y propone pagos con la tarjeta."
+            placeholder="Controla mis gastos del mes y paga con la tarjeta por mí."
             required
           />
         </Field>
@@ -104,7 +104,7 @@ export function NewAgentForm() {
 
       {/* Permisos: lista estilo ajustes, checkbox a la derecha */}
       <Section
-        hint="Capacidades de belo que el agente puede usar. Todo lo que mueve plata requiere tu aprobación igual."
+        hint="Capacidades de belo que el agente puede usar. Lo que mueve plata se ejecuta solo, dentro del límite por operación y el presupuesto mensual."
         tag={<SimTag />}
         title="Permisos belo"
       >
@@ -225,7 +225,7 @@ export function NewAgentForm() {
         <Button asChild className="w-full sm:flex-1" size="lg" variant="secondary">
           <Link href="/">Volver</Link>
         </Button>
-        <p className="text-center text-ink-3 text-xs">El agente propone. Vos decidís.</p>
+        <p className="text-center text-ink-3 text-xs">El agente ejecuta solo. Vos ponés los límites.</p>
       </div>
     </form>
   );
