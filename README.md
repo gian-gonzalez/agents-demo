@@ -36,7 +36,11 @@ Cómo un solo deployment sirve agentes de muchos usuarios: el chat envía `x-age
 | `exchange.fx`         | `exchange_fx`      | siempre                           |
 | `ramp.fiat_crypto`    | `ramp_fiat_crypto` | siempre                           |
 | `card.manage`         | `card_manage`      | al emitir tarjeta                 |
-| `transaction.approve` | `transaction_pay`  | siempre; riesgo y límite → denied |
+| `transaction.approve` | `transaction_pay`  | siempre; riesgo, límite por operación y presupuesto mensual → denied |
+
+## Presupuesto mensual (real)
+
+El saldo belo es mock y vuelve a la semilla en cada conversación; el **presupuesto mensual** no. Al crear un agente se puede fijar un tope en US$ por mes (`agents.monthly_budget_usd`, opcional). Cada pago aprobado y ejecutado se guarda en la tabla `spend` (agente, sesión, comercio, monto) y `transaction_pay` suma lo gastado en el mes calendario (UTC) antes de proponer: si el pago supera lo que queda, lo rechaza con `BUDGET_EXCEEDED` sin pedir aprobación. Las instrucciones del agente incluyen el presupuesto y lo gastado al inicio de la sesión (memoizado: el system prompt debe ser estable dentro de una conversación), y cada pago devuelve el gasto y el restante actualizados. La página del agente muestra "Usado este mes" con barra de progreso.
 
 ## Desarrollo
 

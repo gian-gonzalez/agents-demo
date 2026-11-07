@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Chip, SimTag } from "@/components/brand";
+import { Chip, ProgressBar, SimTag } from "@/components/brand";
 import type { Agent } from "@/lib/db/store";
 import { BELO_PERMISSION_LABELS, isBeloPermission } from "@/lib/belo";
 import { timeAgo } from "@/lib/time";
@@ -10,7 +10,10 @@ import { Avatar } from "../../../_components/avatar";
  * el límite de tarjeta con SimTag. Sin acción mango: la acción primaria de esta pantalla es
  * el botón enviar del chat.
  */
-export function AgentHeader({ agent }: { readonly agent: Agent }) {
+const usd = (value: number) =>
+  `US$${new Intl.NumberFormat("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(value)}`;
+
+export function AgentHeader({ agent, spentUsd }: { readonly agent: Agent; readonly spentUsd: number }) {
   return (
     <section className="shrink-0 border-line border-b bg-paper lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
       <div className="flex w-full flex-col gap-3 px-4 pt-3 pb-4 sm:px-6 lg:gap-4 lg:px-0 lg:pt-8 lg:pr-8">
@@ -56,9 +59,21 @@ export function AgentHeader({ agent }: { readonly agent: Agent }) {
             ))
           )}
           <span className="ml-auto inline-flex items-center gap-1.5 text-ink-3 text-xs lg:ml-0 lg:w-full lg:pt-2">
-            <span className="tnum">límite US${agent.cardLimitUsd}</span>
+            <span className="tnum">límite US${agent.cardLimitUsd} por operación</span>
             <SimTag />
           </span>
+        </div>
+
+        {/* Presupuesto mensual real: gasto acumulado entre todas las conversaciones del agente. */}
+        <div className="flex flex-col gap-2 rounded-2xl bg-sheet px-4 py-3 ring-1 ring-line">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="text-ink-3 text-xs">Usado este mes</span>
+            <span className="text-ink-3 text-xs tnum">
+              {agent.monthlyBudgetUsd == null ? "sin tope mensual" : `de ${usd(agent.monthlyBudgetUsd)}`}
+            </span>
+          </div>
+          <span className="font-bold text-[28px] leading-none tracking-[-0.02em] tnum">{usd(spentUsd)}</span>
+          {agent.monthlyBudgetUsd == null ? null : <ProgressBar max={agent.monthlyBudgetUsd} value={spentUsd} />}
         </div>
       </div>
     </section>

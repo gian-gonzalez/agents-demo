@@ -13,12 +13,14 @@ export async function AgentChatPage({
   readonly sessionId?: string;
   readonly sessionless?: boolean;
 }) {
-  const agent = await getStore().getAgent(agentId);
+  const store = getStore();
+  const agent = await store.getAgent(agentId);
   if (!agent) notFound();
+  const spentUsd = await store.monthlySpend(agent.id);
 
   return (
     <div className="mx-auto flex h-[calc(100dvh-3.5rem)] min-h-0 w-full max-w-6xl flex-col overflow-hidden bg-paper lg:grid lg:grid-cols-[340px_minmax(0,1fr)] lg:px-8">
-      <AgentHeader agent={agent} />
+      <AgentHeader agent={agent} spentUsd={spentUsd} />
       <AuthenticatedAgentChat
         agentEmoji={agent.emoji}
         agentId={agent.id}

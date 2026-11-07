@@ -18,6 +18,10 @@ const schema = z.object({
   instructions: z.string().trim().min(20, "Dale al menos una instrucción concreta").max(4000, "Máximo 4000 caracteres"),
   permissions: z.array(z.enum(BELO_PERMISSIONS)).min(1, "Habilitá al menos un permiso"),
   cardLimitUsd: z.coerce.number().int("Usá un número entero").min(1, "Mínimo US$1").max(10000, "Máximo US$10.000"),
+  monthlyBudgetUsd: z.preprocess(
+    (value) => (value === "" || value == null ? null : value),
+    z.coerce.number().int("Usá un número entero").min(1, "Mínimo US$1").max(100000, "Máximo US$100.000").nullable(),
+  ),
   visibility: z.enum(["public", "unlisted"]),
 });
 
@@ -35,6 +39,7 @@ export async function createAgentAction(
     instructions: formData.get("instructions"),
     permissions: formData.getAll("permissions"),
     cardLimitUsd: formData.get("cardLimitUsd"),
+    monthlyBudgetUsd: formData.get("monthlyBudgetUsd"),
     visibility: formData.get("visibility"),
   };
 

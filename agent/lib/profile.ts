@@ -13,8 +13,10 @@ export interface AgentProfile {
   instructions: string;
   /** Belo capability IDs the owner granted, e.g. "account.balances". */
   permissions: BeloPermission[];
-  /** Monthly card limit in USD the owner set for this agent. */
+  /** Per-operation card limit in USD the owner set for this agent. */
   cardLimitUsd: number;
+  /** Monthly spending cap in USD across every conversation; null = no cap. */
+  monthlyBudgetUsd: number | null;
   ownerId: string;
   ownerName: string;
 }

@@ -12,6 +12,8 @@ export const agents = pgTable("agents", {
   instructions: text("instructions").notNull(),
   permissions: jsonb("permissions").$type<string[]>().notNull(),
   cardLimitUsd: integer("card_limit_usd").notNull(),
+  /** Optional monthly spending cap in USD across every conversation. Null = no cap. */
+  monthlyBudgetUsd: integer("monthly_budget_usd"),
   visibility: text("visibility").$type<"public" | "unlisted">().notNull().default("public"),
   ownerId: text("owner_id").notNull(),
   ownerName: text("owner_name").notNull(),
@@ -36,7 +38,24 @@ export const runs = pgTable("runs", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * One approved and executed payment made by an agent. This is what makes the
+ * monthly budget real: it is summed across sessions, unlike the mock account,
+ * which restarts on every conversation.
+ */
+export const spend = pgTable("spend", {
+  id: text("id").primaryKey(),
+  agentId: text("agent_id").notNull(),
+  sessionId: text("session_id").notNull(),
+  merchant: text("merchant").notNull(),
+  amountUsd: numeric("amount_usd", { precision: 12, scale: 2 }).notNull(),
+  movementId: text("movement_id"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type AgentRow = typeof agents.$inferSelect;
 export type NewAgentRow = typeof agents.$inferInsert;
 export type RunRow = typeof runs.$inferSelect;
 export type NewRunRow = typeof runs.$inferInsert;
+export type SpendRow = typeof spend.$inferSelect;
+export type NewSpendRow = typeof spend.$inferInsert;

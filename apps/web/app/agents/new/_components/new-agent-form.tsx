@@ -164,6 +164,27 @@ export function NewAgentForm() {
           />
         </Field>
 
+        <Field
+          error={errors.monthlyBudgetUsd}
+          hint="Tope real de gasto por mes, sumando todas las conversaciones. Vacío = sin tope."
+          htmlFor="monthlyBudgetUsd"
+          label="Presupuesto mensual (US$)"
+        >
+          <Input
+            aria-invalid={Boolean(errors.monthlyBudgetUsd)}
+            className="text-[20px] font-semibold"
+            defaultValue={str("monthlyBudgetUsd", "")}
+            id="monthlyBudgetUsd"
+            inputMode="numeric"
+            max={100000}
+            min={1}
+            name="monthlyBudgetUsd"
+            placeholder="Sin tope"
+            step={1}
+            type="number"
+          />
+        </Field>
+
         <Field error={errors.visibility} label="Visibilidad">
           <div className="flex gap-1 rounded-full bg-ink/[0.05] p-1" role="radiogroup">
             {[

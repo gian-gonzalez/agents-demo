@@ -22,6 +22,7 @@ export const DEMO_PROFILE: AgentProfile = {
     "Ayudás a la persona a operar su cuenta belo: consultás saldos y rendimientos, proponés cambios de moneda y pagos con tarjeta cuando te lo piden.",
   permissions: [...BELO_PERMISSIONS],
   cardLimitUsd: 2000,
+  monthlyBudgetUsd: null,
   ownerId: "local-dev",
   ownerName: "Desarrollador local",
 };
@@ -42,6 +43,7 @@ async function loadProfile(agentId: string): Promise<AgentProfile | null> {
     instructions: agent.instructions,
     permissions: agent.permissions.filter(isBeloPermission),
     cardLimitUsd: agent.cardLimitUsd,
+    monthlyBudgetUsd: agent.monthlyBudgetUsd ?? null,
     ownerId: agent.ownerId,
     ownerName: agent.ownerName,
   };

@@ -19,7 +19,9 @@ import {
   toUsd,
   type Currency,
 } from "./belo-mock";
+import { budgetStatus, formatUsd } from "./budget";
 import type { AgentProfile, BeloPermission } from "./profile";
+import { getStore } from "../../apps/web/lib/db/store.js";
 
 const currencySchema = z.enum(["ARS", "USD", "USDC", "BTC"]);
 
@@ -204,7 +206,7 @@ export function buildBeloTools(profile: AgentProfile) {
   if (granted.has("transaction.approve")) {
     tools.transaction_pay = defineTool({
       description:
-        "Propone un pago con tarjeta belo a un comercio. Corre un chequeo de riesgo y el límite del agente; si pasa, queda en HUMAN_APPROVAL_REQUIRED hasta que la persona apruebe.",
+        "Propone un pago con tarjeta belo a un comercio. Corre un chequeo de riesgo, el límite por operación y el presupuesto mensual del agente (gasto acumulado entre todas las conversaciones); si pasa, queda en HUMAN_APPROVAL_REQUIRED hasta que la persona apruebe.",
       inputSchema: z.object({
         merchant: z.string().min(1),
         amountUsd: z.number().positive(),
@@ -213,7 +215,7 @@ export function buildBeloTools(profile: AgentProfile) {
       }),
       label: { start: ({ merchant, amountUsd }) => `Proponer pago de US$${amountUsd.toFixed(2)} a ${merchant}` },
       approval: {
-        request: ({ toolInput }) => {
+        request: async ({ toolInput }) => {
           const merchant = String(toolInput?.merchant ?? "").toLowerCase();
           const amount = Number(toolInput?.amountUsd ?? 0);
           if (RISKY_MERCHANTS.some((r) => merchant.includes(r))) {
@@ -222,12 +224,22 @@ export function buildBeloTools(profile: AgentProfile) {
           if (amount > profile.cardLimitUsd) {
             return { type: "denied", reason: `LIMIT_EXCEEDED: el límite de este agente es US$${profile.cardLimitUsd} y el pago es US$${amount.toFixed(2)}.` };
           }
+          // Presupuesto mensual real: suma de pagos ejecutados por este agente en el mes, en todas las sesiones.
+          const budget = await budgetStatus(profile);
+          if (budget.budgetUsd != null && budget.remainingUsd != null && amount > budget.remainingUsd) {
+            return {
+              type: "denied",
+              reason:
+                `BUDGET_EXCEEDED: el presupuesto mensual de este agente es ${formatUsd(budget.budgetUsd)}, ` +
+                `ya gastó ${formatUsd(budget.spentUsd)} este mes y le quedan ${formatUsd(budget.remainingUsd)}; el pago es ${formatUsd(amount)}.`,
+            };
+          }
           return "user-approval";
         },
         prompt: ({ input }) =>
           `HUMAN_APPROVAL_REQUIRED · Pagar US$${input.amountUsd.toFixed(2)} a ${input.merchant}` + (input.memo ? ` · ${input.memo}` : ""),
       },
-      async execute({ merchant, amountUsd, cardId, memo }) {
+      async execute({ merchant, amountUsd, cardId, memo }, ctx) {
         const acc = account.get();
         const card = cardId ? acc.cards.find((c) => c.id === cardId) : acc.cards.find((c) => c.status === "active");
         if (!card) throw new Error("No hay una tarjeta activa para pagar.");
@@ -250,6 +262,32 @@ export function buildBeloTools(profile: AgentProfile) {
         }));
         const remaining = account.get().balances[currency];
         const dailyYield = (remaining * account.get().yieldApy[currency]) / 365;
+
+        // Registra el gasto real del agente (persistente entre sesiones) para el presupuesto mensual.
+        let budget: Record<string, string> = {};
+        if (profile.id !== "demo") {
+          try {
+            await getStore().recordSpend({
+              agentId: profile.id,
+              sessionId: ctx.session.id,
+              merchant,
+              amountUsd,
+              movementId: movement.id,
+            });
+            const status = await budgetStatus(profile);
+            budget =
+              status.budgetUsd == null
+                ? { spentThisMonth: formatUsd(status.spentUsd), monthlyBudget: "sin tope" }
+                : {
+                    spentThisMonth: formatUsd(status.spentUsd),
+                    monthlyBudget: formatUsd(status.budgetUsd),
+                    budgetRemaining: formatUsd(status.remainingUsd ?? 0),
+                  };
+          } catch (error) {
+            console.warn("No se pudo registrar el gasto del agente", { agentId: profile.id, error });
+          }
+        }
+
         return {
           status: "APPROVED_AND_EXECUTED",
           movementId: movement.id,
@@ -258,6 +296,7 @@ export function buildBeloTools(profile: AgentProfile) {
           amount: formatMoney(-amountUsd, currency),
           remainingBalance: formatMoney(remaining, currency),
           yieldOnRemaining: `${formatMoney(dailyYield, currency)} por día`,
+          ...budget,
         };
       },
     });

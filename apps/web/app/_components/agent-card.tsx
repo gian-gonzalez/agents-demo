@@ -66,7 +66,15 @@ export function AgentCard({
           {agent.runsCount === 1 ? "ejecución" : "ejecuciones"}
         </span>
         <span className="flex items-center gap-1.5 tnum">
-          Límite US$ <span className="font-semibold text-ink-2">{agent.cardLimitUsd}</span>
+          {agent.monthlyBudgetUsd == null ? (
+            <>
+              Límite US$ <span className="font-semibold text-ink-2">{agent.cardLimitUsd}</span>
+            </>
+          ) : (
+            <>
+              <span className="font-semibold text-ink-2">US${agent.monthlyBudgetUsd}</span>/mes
+            </>
+          )}
           <SimTag />
         </span>
       </footer>
