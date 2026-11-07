@@ -72,7 +72,7 @@ export function buildBeloTools(profile: AgentProfile) {
             apy: acc.yieldApy[c],
             apyFormatted: `${(acc.yieldApy[c] * 100).toFixed(1)}%`,
             estimatedDaily: formatMoney(daily, c),
-            estimatedMonthly: formatMoney(daily * 30, c),
+            estimatedMonthly: formatMoney((acc.balances[c] * acc.yieldApy[c]) / 12, c),
           };
         });
       },
@@ -142,8 +142,8 @@ export function buildBeloTools(profile: AgentProfile) {
       async execute({ direction, fiat, crypto, amount, method }) {
         if (direction === "on") {
           const received = amount * fxRate(fiat, crypto);
-          recordMovement({ date: new Date().toISOString(), type: "ramp", description: `On-ramp ${method} → ${crypto}`, amount: received, currency: crypto, status: "pending" });
-          return { status: "pending", note: "El depósito bancario se acredita en minutos (mock).", received: formatMoney(received, crypto) };
+          recordMovement({ date: new Date().toISOString(), type: "ramp", description: `On-ramp ${method} → ${crypto}`, amount: received, currency: crypto, status: "completed" });
+          return { status: "completed", note: "Acreditado al instante (cuenta demo).", received: formatMoney(received, crypto) };
         }
         const acc = account.get();
         if (acc.balances[crypto] < amount) {

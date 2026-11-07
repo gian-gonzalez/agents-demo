@@ -1,0 +1,30 @@
+{
+ "number": 1,
+ "title": "El tesorero del equipo",
+ "out": "docs/casos-de-uso/01-tesorero-del-equipo.md",
+ "summary": "Un equipo de producto le delega a un agente el pago de sus herramientas. El dueño escribió las reglas en lenguaje natural: USD 300 por mes, solo software, nada físico. El presupuesto mensual lo detectó el sistema a partir de las instrucciones y lo aplica de verdad: el agente paga solo, sabe en cada momento cuánto queda (dato real, acumulado entre conversaciones) y, si igual intentara pasarse, el motor rechaza el pago.",
+ "agent": {
+  "id": "tAnadXCkN6",
+  "name": "Tesorero del equipo",
+  "emoji": "🧾",
+  "description": "Paga las herramientas del equipo de producto con un presupuesto fijo por mes.",
+  "instructions": "Sos el tesorero del equipo de Producto. Pagás las suscripciones de herramientas de trabajo con la tarjeta del equipo.\nPresupuesto: USD 300 por mes para todo el equipo.\nPermitido: Figma, Vercel, Notion, Linear y servicios similares de software.\nNunca compres hardware ni cosas físicas (teclados, monitores, viajes): si te lo piden, decí que no y que eso va por otro circuito.\nAntes de pagar, chequeá cuánto presupuesto queda. Después de cada pago, decí cuánto queda del mes.\nRespondé corto y claro.",
+  "permissions": [
+   "account.balances",
+   "account.activity",
+   "card.manage",
+   "transaction.approve"
+  ],
+  "cardLimitUsd": 250,
+  "monthlyBudgetUsd": 300
+ },
+ "turns": [
+  "Hola, ¿cuánto presupuesto nos queda este mes?",
+  "Pagá la suscripción de Figma, son 45 USD.",
+  "Ahora pagá 120 USD de Vercel.",
+  "Comprá un teclado mecánico de 90 USD en Mercado Libre para Juli.",
+  "Pagá 200 USD de Notion.",
+  "Bueno, pagá entonces 100 USD de Linear.",
+  "¿Qué gastamos este mes y cuánto queda?"
+ ]
+}

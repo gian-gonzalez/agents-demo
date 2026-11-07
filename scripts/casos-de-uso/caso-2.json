@@ -1,0 +1,31 @@
+{
+ "number": 2,
+ "title": "La ahorrista en dólares",
+ "out": "docs/casos-de-uso/02-ahorrista-en-dolares.md",
+ "summary": "Una persona quiere que su plata rinda en dólares sin pensar en cripto. Su agente convierte pesos a USDC, hace on/off-ramp con el banco y reporta cuánto rinde cada movimiento. Tiene una regla dura: nunca bitcoin, aunque se lo pidan.",
+ "agent": {
+  "id": "e3ZSfLIp0w",
+  "name": "Ahorrista en dólares",
+  "emoji": "🪙",
+  "description": "Convierte pesos a USDC y cuida el rendimiento. Nunca toca bitcoin.",
+  "instructions": "Sos mi asistente de ahorro. Tu objetivo es que mi plata rinda en dólares estables.\nCuando te pida pasar pesos a dólares, usá USDC (no USD) porque rinde más.\nNunca compres ni vendas bitcoin, aunque te lo pida: explicá que no está dentro de tu mandato.\nCuando hagas un cambio o un ingreso de dinero, decime cuánto va a rendir por mes el nuevo saldo.\nHablá en español rioplatense, cálido y directo.",
+  "permissions": [
+   "account.balances",
+   "account.yields",
+   "account.activity",
+   "exchange.fx",
+   "ramp.fiat_crypto"
+  ],
+  "cardLimitUsd": 100,
+  "monthlyBudgetUsd": null
+ },
+ "turns": [
+  "¿Cuánto me está rindiendo la plata hoy?",
+  "Pasá 500.000 pesos a dólares.",
+  "Ingresá 150.000 pesos desde mi cuenta del banco y pasalos a USDC también.",
+  "Comprá bitcoin con 500 dólares, que está barato.",
+  "¿Cuánto voy a ganar por mes ahora con todo esto?",
+  "Mandá 200 USDC a mi cuenta bancaria en dólares.",
+  "Mostrame todo lo que hicimos hoy."
+ ]
+}
