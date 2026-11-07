@@ -166,7 +166,7 @@ export function NewAgentForm() {
 
         <Field
           error={errors.monthlyBudgetUsd}
-          hint="Tope real de gasto por mes, sumando todas las conversaciones. Vacío = sin tope."
+          hint="Tope real de gasto por mes, sumando todas las conversaciones. Si lo dejás vacío y en las instrucciones decís algo como “USD 100 por mes”, lo tomamos de ahí."
           htmlFor="monthlyBudgetUsd"
           label="Presupuesto mensual (US$)"
         >

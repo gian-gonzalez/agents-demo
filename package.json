@@ -19,7 +19,8 @@
     "dev:all": "vercel dev --local",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "typecheck:web": "tsc -p apps/web/tsconfig.json --noEmit"
+    "typecheck:web": "tsc -p apps/web/tsconfig.json --noEmit",
+    "db:backfill-budget": "node --experimental-strip-types scripts/backfill-monthly-budget.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

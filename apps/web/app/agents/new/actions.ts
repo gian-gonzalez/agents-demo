@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { BELO_PERMISSIONS, EMOJI_PRESETS } from "@/lib/belo";
 import { getCurrentUser } from "@/lib/current-user";
+import { inferMonthlyBudgetUsd } from "@/lib/budget-from-instructions";
 import { getStore } from "@/lib/db/store";
 
 export interface NewAgentFormState {
@@ -61,8 +62,13 @@ export async function createAgentAction(
     };
   }
 
+  // Si el campo quedó vacío pero las instrucciones fijan un tope mensual ("USD 100 por mes"),
+  // ese tope se vuelve real: el sistema lo aplica, no solo el modelo.
+  const monthlyBudgetUsd = parsed.data.monthlyBudgetUsd ?? inferMonthlyBudgetUsd(parsed.data.instructions);
+
   const agent = await getStore().createAgent({
     ...parsed.data,
+    monthlyBudgetUsd,
     owner: { id: user.id, name: user.name, email: user.email, image: user.image },
   });
 
