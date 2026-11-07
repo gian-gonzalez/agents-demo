@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { MangoMark } from "@/components/brand";
+import { ArrowRightIcon } from "lucide-react";
+import { Chip, MangoMark } from "@/components/brand";
+import { SHOWCASE_CASES } from "@/lib/showcase";
 import { Button } from "@/components/ui/button";
 import { getStore } from "@/lib/db/store";
 import { AgentCard } from "./_components/agent-card";
@@ -38,6 +40,8 @@ export default async function HomePage() {
 
       <StatsRow stats={stats} />
       </div>
+
+      <ShowcaseSection />
 
       <LiveRefresh>
         <section className="flex flex-col gap-4">
@@ -89,5 +93,49 @@ function EmptyFeed() {
         <Link href="/agents/new">Sé el primero</Link>
       </Button>
     </div>
+  );
+}
+
+/** Dos agentes reales con una conversación guardada: para mostrar la demo aunque nadie haya creado nada todavía. */
+function ShowcaseSection() {
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <h2 className="font-bold text-xl tracking-[-0.01em]">Casos de ejemplo</h2>
+        <p className="text-ink-3 text-sm">Dos agentes ya creados, con una conversación real guardada. Probalos en vivo o leé cómo respondieron.</p>
+      </div>
+      <ol className="grid gap-3 md:grid-cols-2 lg:gap-4">
+        {SHOWCASE_CASES.map((c) => (
+          <li className="flex flex-col gap-4 rounded-2xl bg-sheet p-5 ring-1 ring-line" key={c.slug}>
+            <div className="flex items-start gap-3">
+              <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-full bg-ink/[0.05] text-2xl">
+                {c.emoji}
+              </span>
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="text-ink-3 text-xs font-semibold uppercase tracking-[0.06em]">Caso {c.number}</span>
+                <h3 className="font-bold text-lg leading-6 tracking-[-0.01em]">{c.title}</h3>
+              </div>
+            </div>
+            <p className="text-ink-2 text-sm leading-5">{c.blurb}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {c.highlights.map((h) => (
+                <Chip key={h}>{h}</Chip>
+              ))}
+            </div>
+            <div className="mt-auto flex flex-col gap-2 pt-1 sm:flex-row">
+              <Button asChild className="sm:flex-1" variant="secondary">
+                <Link href={`/casos/${c.slug}`}>Ver la conversación</Link>
+              </Button>
+              <Button asChild className="sm:flex-1" variant="secondary">
+                <Link href={`/agents/${encodeURIComponent(c.agentId)}`}>
+                  Probar en vivo
+                  <ArrowRightIcon className="size-4" strokeWidth={2.2} />
+                </Link>
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

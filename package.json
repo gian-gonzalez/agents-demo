@@ -20,7 +20,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "typecheck:web": "tsc -p apps/web/tsconfig.json --noEmit",
-    "db:backfill-budget": "node --experimental-strip-types scripts/backfill-monthly-budget.ts"
+    "db:backfill-budget": "node --experimental-strip-types scripts/backfill-monthly-budget.ts",
+    "casos:build": "node scripts/casos-de-uso/build-content.mjs",
+    "casos:claim": "node --experimental-strip-types scripts/casos-de-uso/claim-agents.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

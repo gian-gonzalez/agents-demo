@@ -59,7 +59,7 @@ lines.push(`# Caso de uso ${c.number}: ${c.title}`, "");
 lines.push(c.summary, "");
 lines.push(`**Agente:** ${c.agent.emoji} [${c.agent.name}](${PUBLIC_URL}/agents/${c.agent.id}) · límite US$${c.agent.cardLimitUsd} por operación${c.agent.monthlyBudgetUsd ? ` · presupuesto US$${c.agent.monthlyBudgetUsd}/mes` : ""}`, "");
 lines.push("**Instrucciones que le dio su dueño:**", "");
-for (const l of c.agent.instructions.split("\n")) lines.push(`> ${l}`);
+lines.push(c.agent.instructions.split("\n").map((l) => `> ${l}`).join("\n>\n"));
 lines.push("", `**Permisos belo:** ${c.agent.permissions.map((p) => `\`${p}\``).join(", ")}`, "");
 lines.push("---", "", "## Conversación", "");
 
@@ -97,3 +97,5 @@ for (let i = 0; i < c.turns.length; i++) {
 lines.push("---", "", `_Generado el ${new Date().toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" })} contra la cuenta belo simulada. Los saldos vuelven a la semilla en cada conversación; el gasto del presupuesto mensual es real y persiste._`);
 writeFileSync(new URL(`../../${c.out}`, import.meta.url), lines.join("\n"));
 console.log("DONE", c.out);
+// Actualiza el módulo que lee la web (apps/web/content/casos.generated.ts).
+await import("./build-content.mjs");
