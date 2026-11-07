@@ -58,4 +58,6 @@ vercel env pull && pnpm db:push           # crea las tablas
 eve deploy
 ```
 
-Requisitos en la cuenta de Vercel: AI Gateway habilitado (pide tarjeta para liberar los créditos gratis) y Sign in with Vercel (lo configura `eve add channel/web`; solo entran miembros del equipo del proyecto).
+Modelo: `agent/agent.ts` llama a Anthropic directo con `ANTHROPIC_API_KEY` (local en `.env.local`, en Vercel con `vercel env add`). Alternativa: volver al string `anthropic/claude-opus-5.5` para usar AI Gateway (pide tarjeta para liberar los créditos gratis).
+
+Requisitos en la cuenta de Vercel: y Sign in with Vercel (lo configura `eve add channel/web`; solo entran miembros del equipo del proyecto).
