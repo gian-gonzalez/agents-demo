@@ -90,7 +90,9 @@ export function buildBeloTools(profile: AgentProfile) {
       approval: never(),
       async execute({ type, limit }) {
         const acc = account.get();
-        return acc.activity
+        return [...acc.activity]
+          // Newest first: the seed is listed oldest-first, new movements are prepended.
+          .sort((a, b) => b.date.localeCompare(a.date))
           .filter((m) => (type ? m.type === type : true))
           .slice(0, limit)
           .map((m) => ({ ...m, formatted: formatMoney(m.amount, m.currency) }));
