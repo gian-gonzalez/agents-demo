@@ -60,4 +60,4 @@ eve deploy
 
 Modelo: `agent/agent.ts` llama a Anthropic directo con `ANTHROPIC_API_KEY` (local en `.env.local`, en Vercel con `vercel env add`). Alternativa: volver al string `anthropic/claude-opus-5.5` para usar AI Gateway (pide tarjeta para liberar los créditos gratis).
 
-Requisitos en la cuenta de Vercel: y Sign in with Vercel (lo configura `eve add channel/web`; solo entran miembros del equipo del proyecto).
+Requisitos en la cuenta de Vercel: y Sign in with Vercel (lo configura `eve add channel/web`). La app quedó con **Sign-In Access = Anyone with a Vercel account** (campo `signInFrom: any-team`, cambiado vía `vercel api PATCH /v1/apps/<id>`), así cualquier persona con cuenta de Vercel puede entrar y crear agentes.
